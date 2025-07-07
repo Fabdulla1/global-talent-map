@@ -2,3 +2,26 @@
 .Rhistory
 .RData
 .Ruserdata
+
+# Large geographic data files (downloaded automatically)
+geoBoundariesCGAZ_ADM0.geojson
+
+# Python virtual environment
+.env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Generated map files (can be regenerated)
+index.html
+index_python.html
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
