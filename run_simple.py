@@ -251,7 +251,7 @@ class GlobalTalentMap:
         # Create base map with no default tiles
         m = folium.Map(
             location=[20, 20],
-            zoom_start=2,
+            zoom_start=10,  
             tiles=None,  # No default tiles to avoid conflicts
             prefer_canvas=True,
             world_copy_jump=False,  # Prevent infinite horizontal scrolling
@@ -260,6 +260,38 @@ class GlobalTalentMap:
             min_zoom=1,
             max_zoom=10
         )
+        
+        # Add custom CSS to ensure the map fills the entire viewport
+        viewport_css = """
+        <style>
+        html, body {
+            width: 100vw !important;
+            height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            background: #fff !important;
+        }
+        .folium-map, .folium-map > div, [id*="map_"] {
+            width: 100vw !important;
+            height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            z-index: 1 !important;
+        }
+        .leaflet-container {
+            width: 100vw !important;
+            height: 100vh !important;
+            background: #fff !important;
+        }
+        </style>
+        """
+        m.get_root().html.add_child(folium.Element(viewport_css))
         
         # Set world bounds to prevent infinite scrolling
         m.fit_bounds([[-85, -180], [85, 180]])
@@ -311,12 +343,6 @@ class GlobalTalentMap:
                     box-shadow: 0 6px 20px rgba(0,0,0,0.15);
                     overflow: auto;">
             
-            <!-- Header -->
-            <h4 style="margin: 0 0 12px 0; color: #20c997; 
-                       font-weight: bold; line-height: 1.2; font-size: min(14px, 3.5vw); text-align: center;">
-                🌍 Global Talent Programs
-            </h4>
-            
             <!-- Program countries section -->
             <div style="margin-bottom: 15px; padding: 10px; 
                         background: rgba(32, 201, 151, 0.1); 
@@ -329,9 +355,6 @@ class GlobalTalentMap:
                     <span style="font-weight: bold; color: #2c3e50; font-size: min(13px, 3.2vw);">
                         Program Countries
                     </span>
-                </div>
-                <div style="font-size: min(10px, 2.5vw); color: #6c757d; margin-left: min(24px, 6vw);">
-                    Countries with Global Talent programs
                 </div>
             </div>
             
@@ -378,15 +401,6 @@ class GlobalTalentMap:
                     </span>
                 </div>
             </div>
-            
-            <!-- Footer -->
-            <div style="margin-top: 10px; text-align: center; padding: 6px; 
-                        background: rgba(32, 201, 151, 0.1); 
-                        border-radius: 4px;">
-                <div style="font-size: min(10px, 2.5vw); color: #20c997; font-weight: 500;">
-                    ✨ Hover for details ✨
-                </div>
-            </div>
         </div>
         '''
         
@@ -419,7 +433,7 @@ class GlobalTalentMap:
 
 def main():
     """Main entry point"""
-    print("🌍 Global Talent Map Generator (Python)")
+    print("Global Talent Map Generator (Python)")
     print("=" * 40)
     
     mapper = GlobalTalentMap()
