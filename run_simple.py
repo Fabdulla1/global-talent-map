@@ -302,87 +302,88 @@ class GlobalTalentMap:
         """Add legend to the map"""
         legend_html = '''
         <div style="position: fixed; 
-                    top: 10px; right: 10px; width: 250px; height: 300px; 
+                    top: 10px; right: 10px; 
+                    width: min(220px, 45vw); height: min(260px, 50vh); 
                     background: rgba(255,255,255,0.95); 
                     color: #212529; border: 2px solid #20c997; 
                     z-index: 9999; 
-                    font-size: 13px; padding: 20px; border-radius: 10px; 
-                    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                    font-size: min(12px, 3vw); padding: min(15px, 3vw); border-radius: 8px; 
+                    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
                     overflow: auto;">
             
             <!-- Header -->
-            <h4 style="margin: 0 0 15px 0; color: #20c997; 
-                       font-weight: bold; line-height: 1.2; font-size: 16px; text-align: center;">
+            <h4 style="margin: 0 0 12px 0; color: #20c997; 
+                       font-weight: bold; line-height: 1.2; font-size: min(14px, 3.5vw); text-align: center;">
                 🌍 Global Talent Programs
             </h4>
             
             <!-- Program countries section -->
-            <div style="margin-bottom: 20px; padding: 12px; 
+            <div style="margin-bottom: 15px; padding: 10px; 
                         background: rgba(32, 201, 151, 0.1); 
-                        border-radius: 8px;">
-                <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                    <div style="width: 18px; height: 12px; 
+                        border-radius: 6px;">
+                <div style="display: flex; align-items: center; margin-bottom: 6px;">
+                    <div style="width: min(16px, 4vw); height: min(10px, 2.5vw); 
                                background: #20c997; 
-                               border: 1px solid #17a2b8; margin-right: 10px; 
+                               border: 1px solid #17a2b8; margin-right: 8px; 
                                border-radius: 3px; flex-shrink: 0;"></div>
-                    <span style="font-weight: bold; color: #2c3e50; font-size: 14px;">
+                    <span style="font-weight: bold; color: #2c3e50; font-size: min(13px, 3.2vw);">
                         Program Countries
                     </span>
                 </div>
-                <div style="font-size: 11px; color: #6c757d; margin-left: 28px;">
+                <div style="font-size: min(10px, 2.5vw); color: #6c757d; margin-left: min(24px, 6vw);">
                     Countries with Global Talent programs
                 </div>
             </div>
             
             <!-- Program types section -->
-            <div style="background: rgba(248, 249, 250, 0.8); padding: 15px; border-radius: 8px;">
-                <div style="font-weight: bold; margin-bottom: 12px; color: #2c3e50; 
-                           font-size: 14px; text-align: center;">
+            <div style="background: rgba(248, 249, 250, 0.8); padding: min(12px, 3vw); border-radius: 6px;">
+                <div style="font-weight: bold; margin-bottom: 10px; color: #2c3e50; 
+                           font-size: min(13px, 3.2vw); text-align: center;">
                     Program Types
                 </div>
                 
-                <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                    <div style="width: 12px; height: 12px; background-color: #1f77b4; 
-                               border-radius: 50%; margin-right: 10px; 
+                <div style="display: flex; align-items: center; margin-bottom: 6px;">
+                    <div style="width: min(10px, 2.5vw); height: min(10px, 2.5vw); background-color: #1f77b4; 
+                               border-radius: 50%; margin-right: 8px; 
                                box-shadow: 0 1px 3px rgba(31, 119, 180, 0.4); flex-shrink: 0;"></div>
-                    <span style="color: #2c3e50; font-weight: 500; font-size: 13px;">
+                    <span style="color: #2c3e50; font-weight: 500; font-size: min(11px, 2.8vw);">
                         STAR
                     </span>
                 </div>
                 
-                <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                    <div style="width: 12px; height: 12px; background-color: #ff7f0e; 
-                               border-radius: 50%; margin-right: 10px; 
+                <div style="display: flex; align-items: center; margin-bottom: 6px;">
+                    <div style="width: min(10px, 2.5vw); height: min(10px, 2.5vw); background-color: #ff7f0e; 
+                               border-radius: 50%; margin-right: 8px; 
                                box-shadow: 0 1px 3px rgba(255, 127, 14, 0.4); flex-shrink: 0;"></div>
-                    <span style="color: #2c3e50; font-weight: 500; font-size: 13px;">
+                    <span style="color: #2c3e50; font-weight: 500; font-size: min(11px, 2.8vw);">
                         NATIONS
                     </span>
                 </div>
                 
-                <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                    <div style="width: 12px; height: 12px; background-color: #2ca02c; 
-                               border-radius: 50%; margin-right: 10px; 
+                <div style="display: flex; align-items: center; margin-bottom: 6px;">
+                    <div style="width: min(10px, 2.5vw); height: min(10px, 2.5vw); background-color: #2ca02c; 
+                               border-radius: 50%; margin-right: 8px; 
                                box-shadow: 0 1px 3px rgba(44, 160, 44, 0.4); flex-shrink: 0;"></div>
-                    <span style="color: #2c3e50; font-weight: 500; font-size: 13px;">
+                    <span style="color: #2c3e50; font-weight: 500; font-size: min(11px, 2.8vw);">
                         BIG
                     </span>
                 </div>
                 
-                <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                    <div style="width: 12px; height: 12px; background-color: #d62728; 
-                               border-radius: 50%; margin-right: 10px; 
+                <div style="display: flex; align-items: center; margin-bottom: 6px;">
+                    <div style="width: min(10px, 2.5vw); height: min(10px, 2.5vw); background-color: #d62728; 
+                               border-radius: 50%; margin-right: 8px; 
                                box-shadow: 0 1px 3px rgba(214, 39, 40, 0.4); flex-shrink: 0;"></div>
-                    <span style="color: #2c3e50; font-weight: 500; font-size: 13px;">
+                    <span style="color: #2c3e50; font-weight: 500; font-size: min(11px, 2.8vw);">
                         EXCL
                     </span>
                 </div>
             </div>
             
             <!-- Footer -->
-            <div style="margin-top: 12px; text-align: center; padding: 8px; 
+            <div style="margin-top: 10px; text-align: center; padding: 6px; 
                         background: rgba(32, 201, 151, 0.1); 
-                        border-radius: 6px;">
-                <div style="font-size: 12px; color: #20c997; font-weight: 500;">
+                        border-radius: 4px;">
+                <div style="font-size: min(10px, 2.5vw); color: #20c997; font-weight: 500;">
                     ✨ Hover for details ✨
                 </div>
             </div>
