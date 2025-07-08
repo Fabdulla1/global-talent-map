@@ -197,16 +197,17 @@ class GlobalTalentMap:
         return pd.DataFrame(country_details)
     
     def get_country_style(self, feature):
-        """Get styling for countries based on number of programs"""
-        # Enhanced style for countries with programs - building on light theme
+        """Get styling for countries based on number of programs - button-like appearance"""
+        # Enhanced button-like style for countries with programs
         base_style = {
             'color': '#17a2b8',  # Nice teal border
             'weight': 2.5,
-            'fillOpacity': 0.75,
-            'stroke': True
+            'fillOpacity': 0.85,
+            'stroke': True,
+            'cursor': 'pointer'  # Show pointer cursor to indicate clickability
         }
         
-        # Use the bright teal but more vibrant
+        # Use the bright teal but more vibrant with slight gradient effect
         base_style['fillColor'] = '#20c997'  # Vibrant teal-green
         
         return base_style
@@ -251,7 +252,7 @@ class GlobalTalentMap:
         # Create base map with full interactivity enabled
         m = folium.Map(
             location=[20, 20],
-            zoom_start=4,  # Increased from 2 to 4 (zoomed in twice)
+            zoom_start=3,  
             tiles=None,  # No default tiles to avoid conflicts
             prefer_canvas=True,
             world_copy_jump=False,  # Prevent infinite horizontal scrolling
@@ -288,12 +289,20 @@ class GlobalTalentMap:
             width: 100vw;
             height: 100vh;
         }
+        /* Enhanced styling for clickable countries */
+        .leaflet-interactive {
+            cursor: pointer !important;
+            transition: all 0.2s ease;
+        }
+        .leaflet-interactive:hover {
+            filter: brightness(1.1);
+            transform: scale(1.02);
+        }
         </style>
         """
         m.get_root().html.add_child(folium.Element(viewport_css))
         
-        # Set world bounds to prevent infinite scrolling
-        m.fit_bounds([[-85, -180], [85, 180]])
+        # Note: Removed fit_bounds to preserve zoom_start setting
         
         # Add the clean light theme base tile layer
         folium.TileLayer(
@@ -303,16 +312,44 @@ class GlobalTalentMap:
             overlay=False,
             no_wrap=True  # Prevent tile wrapping
         ).add_to(m)
-          # Add program countries with vibrant highlighting
+          # Add program countries with vibrant highlighting and clickable functionality
         program_countries_layer = folium.GeoJson(
             selected_countries,
             style_function=lambda feature: self.get_country_style(feature),
             tooltip=folium.GeoJsonTooltip(
                 fields=['shapeName', 'program_details'],
                 aliases=['Country:', 'Programs:'],
-                style="background-color: white; border: 2px solid #20c997; border-radius: 8px; padding: 10px; font-size: 14px; max-width: 300px;",
+                style="""
+                    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+                    border: none;
+                    border-radius: 15px;
+                    padding: 18px 24px;
+                    font-size: 16px;
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    max-width: 350px;
+                    box-shadow: 0 12px 35px rgba(0,0,0,0.15), 0 0 0 3px #20c997, 0 0 25px rgba(32, 201, 151, 0.4);
+                    color: #2c3e50;
+                    backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px);
+                    transform: translateY(-5px);
+                    transition: all 0.3s ease;
+                """,
                 sticky=False,
                 labels=True
+            ),
+            popup=folium.Popup(
+                html='''
+                <div style="text-align: center; padding: 15px; min-width: 200px;">
+                    <p style="margin: 10px 0; color: #666;">Click to visit Global Talent Fund website</p>
+                    <a href="https://globtalent.org" target="_blank" 
+                       style="background: #20c997; color: white; padding: 10px 20px; 
+                              text-decoration: none; border-radius: 25px; font-weight: bold;
+                              display: inline-block; transition: all 0.3s ease;">
+                        Visit globtalent.org
+                    </a>
+                </div>
+                ''',
+                max_width=300
             ),
             highlight_function=lambda feature: {
                 'weight': 3.5,
@@ -322,6 +359,7 @@ class GlobalTalentMap:
             },
             name='Program Countries'
         )
+        
         program_countries_layer.add_to(m)
         
         # Add legend
