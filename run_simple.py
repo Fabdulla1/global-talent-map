@@ -248,46 +248,45 @@ class GlobalTalentMap:
             country_program_details, left_on='shapeName', right_on='country', how='left'
         )
         
-        # Create base map with no default tiles
+        # Create base map with full interactivity enabled
         m = folium.Map(
             location=[20, 20],
-            zoom_start=10,  
+            zoom_start=4,  # Increased from 2 to 4 (zoomed in twice)
             tiles=None,  # No default tiles to avoid conflicts
             prefer_canvas=True,
             world_copy_jump=False,  # Prevent infinite horizontal scrolling
             no_wrap=True,  # Prevent map wrapping
             max_bounds=True,  # Enable bounds restriction
             min_zoom=1,
-            max_zoom=10
+            max_zoom=10,
+            zoom_control=True,  # Enable zoom controls
+            scroll_wheel_zoom=True,  # Enable mouse wheel zoom
+            double_click_zoom=True,  # Enable double-click zoom
+            dragging=True,  # Enable map dragging
+            touch_zoom=True,  # Enable touch zoom on mobile
+            keyboard=True,  # Enable keyboard navigation
+            box_zoom=True  # Enable box zoom
         )
         
-        # Add custom CSS to ensure the map fills the entire viewport
+        # Add minimal CSS for full viewport without breaking interactivity
         viewport_css = """
         <style>
         html, body {
-            width: 100vw !important;
-            height: 100vh !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            overflow: hidden !important;
-            background: #fff !important;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
         }
-        .folium-map, .folium-map > div, [id*="map_"] {
-            width: 100vw !important;
-            height: 100vh !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            z-index: 1 !important;
+        .folium-map {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
         }
         .leaflet-container {
-            width: 100vw !important;
-            height: 100vh !important;
-            background: #fff !important;
+            width: 100vw;
+            height: 100vh;
         }
         </style>
         """
@@ -311,8 +310,8 @@ class GlobalTalentMap:
             tooltip=folium.GeoJsonTooltip(
                 fields=['shapeName', 'program_details'],
                 aliases=['Country:', 'Programs:'],
-                style="font-size: 15px; font-weight: normal; padding: 12px 18px; background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,249,250,0.98)); color: #212529; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15), 0 0 20px rgba(32, 201, 151, 0.3); border: 3px solid #20c997; backdrop-filter: blur(5px);",
-                sticky=True,
+                style="background-color: white; border: 2px solid #20c997; border-radius: 8px; padding: 10px; font-size: 14px; max-width: 300px;",
+                sticky=False,
                 labels=True
             ),
             highlight_function=lambda feature: {
