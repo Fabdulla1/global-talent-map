@@ -312,7 +312,7 @@ class GlobalTalentMap:
             overlay=False,
             no_wrap=True  # Prevent tile wrapping
         ).add_to(m)
-          # Add program countries with vibrant highlighting and clickable functionality
+          # Add program countries with vibrant highlighting and direct click functionality
         program_countries_layer = folium.GeoJson(
             selected_countries,
             style_function=lambda feature: self.get_country_style(feature),
@@ -337,20 +337,6 @@ class GlobalTalentMap:
                 sticky=False,
                 labels=True
             ),
-            popup=folium.Popup(
-                html='''
-                <div style="text-align: center; padding: 15px; min-width: 200px;">
-                    <p style="margin: 10px 0; color: #666;">Click to visit Global Talent Fund website</p>
-                    <a href="https://globtalent.org" target="_blank" 
-                       style="background: #20c997; color: white; padding: 10px 20px; 
-                              text-decoration: none; border-radius: 25px; font-weight: bold;
-                              display: inline-block; transition: all 0.3s ease;">
-                        Visit globtalent.org
-                    </a>
-                </div>
-                ''',
-                max_width=300
-            ),
             highlight_function=lambda feature: {
                 'weight': 3.5,
                 'color': '#17a2b8',
@@ -359,6 +345,34 @@ class GlobalTalentMap:
             },
             name='Program Countries'
         )
+        
+        # Add JavaScript for direct click functionality
+        click_js = """
+        <script>
+        // Add click event listener to all country polygons
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait for map to load
+            setTimeout(function() {
+                // Find all interactive elements (country polygons)
+                const countryElements = document.querySelectorAll('.leaflet-interactive');
+                
+                countryElements.forEach(function(element) {
+                    element.addEventListener('click', function(e) {
+                        // Prevent default popup behavior
+                        e.stopPropagation();
+                        
+                        // Open globtalent.org in new tab
+                        window.open('https://globtalent.org', '_blank');
+                    });
+                    
+                    // Add visual feedback for clickable elements
+                    element.style.cursor = 'pointer';
+                });
+            }, 1000);
+        });
+        </script>
+        """
+        m.get_root().html.add_child(folium.Element(click_js))
         
         program_countries_layer.add_to(m)
         
