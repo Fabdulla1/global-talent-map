@@ -42,17 +42,29 @@ class GlobalTalentMap:
         print("Loading world boundaries...")
         world = gpd.read_file(gb_file)
         
-        # Simplify geometries for better performance
-        world['geometry'] = world['geometry'].simplify(tolerance=0.01, preserve_topology=True)
+        # Convert to equal area projection (Mollweide) for accurate area representation
+        print("Converting to equal area projection...")
+        world = world.to_crs('ESRI:54009')  # Mollweide equal area projection
         
-        # Calculate centroids
+        # Simplify geometries for better performance
+        world['geometry'] = world['geometry'].simplify(tolerance=10000, preserve_topology=True)  # Adjusted tolerance for projected coordinates
+        
+        # Calculate centroids in projected coordinates
         print("Calculating country centroids...")
         centroids = world.geometry.centroid
+        
+        # Convert centroids back to WGS84 for folium compatibility
+        centroids_gdf = gpd.GeoDataFrame(geometry=centroids, crs='ESRI:54009')
+        centroids_wgs84 = centroids_gdf.to_crs('EPSG:4326')
+        
         centroids_df = pd.DataFrame({
             'admin': world['shapeName'],
-            'longitude': centroids.x,
-            'latitude': centroids.y
+            'longitude': centroids_wgs84.geometry.x,
+            'latitude': centroids_wgs84.geometry.y
         })
+        
+        # Convert world data back to WGS84 for folium
+        world = world.to_crs('EPSG:4326')
         
         return world, centroids_df
     
@@ -223,8 +235,8 @@ class GlobalTalentMap:
         return colors.get(program.upper(), '#666666')
     
     def create_folium_map(self, world: gpd.GeoDataFrame, dt: pd.DataFrame, centroids_df: pd.DataFrame) -> folium.Map:
-        """Create the folium map"""
-        print("Creating map...")
+        """Create the folium map with equal area considerations"""
+        print("Creating map with equal area considerations...")
         
         # Merge data with centroids
         dt = dt.merge(centroids_df, left_on='country', right_on='admin', how='left')
@@ -235,137 +247,125 @@ class GlobalTalentMap:
             print(f"Warning: Missing coordinates for countries: {missing_coords['country'].unique()}")
             dt = dt.dropna(subset=['longitude', 'latitude'])
         
-        # Separate countries
-        selected_countries = world[world['shapeName'].isin(dt['country'])]
-        other_countries = world[~world['shapeName'].isin(dt['country'])]
+        # Use original world data and ensure it's in the right format
+        print(f"World data shape: {world.shape}")
+        print(f"World CRS: {world.crs}")
+        
+        # Ensure world data is in WGS84
+        if world.crs != 'EPSG:4326':
+            world = world.to_crs('EPSG:4326')
+        
+        # Get program countries
+        program_country_names = dt['country'].unique()
+        print(f"Looking for these program countries: {list(program_country_names)}")
+        
+        selected_countries = world[world['shapeName'].isin(program_country_names)].copy()
+        other_countries = world[~world['shapeName'].isin(program_country_names)].copy()
+        
+        print(f"Found {len(selected_countries)} program countries in world data")
+        print(f"Found {len(other_countries)} other countries in world data")
         
         # Filter out small territories
-        exclude_countries = ['Dragonja', 'Vatican City', 'Liancourt Rocks', 'Spratly Is', 'Fiji', 'Antarctica']
+        exclude_countries = ['Dragonja', 'Vatican City', 'Liancourt Rocks', 'Spratly Is', 'Antarctica']
         other_countries = other_countries[~other_countries['shapeName'].isin(exclude_countries)]
         
-        # Add program info to selected countries with detailed program breakdown
+        # Add program info to selected countries
         country_program_details = self.create_country_program_details(dt)
         selected_countries = selected_countries.merge(
             country_program_details, left_on='shapeName', right_on='country', how='left'
         )
         
-        # Create base map with full interactivity enabled
+        print(f"Selected countries after merge: {len(selected_countries)}")
+        if len(selected_countries) > 0:
+            print(f"Sample program details: {selected_countries[['shapeName', 'program_details']].head()}")
+        else:
+            print("ERROR: No selected countries found after merge!")
+        
+        # Create base map
         m = folium.Map(
-            location=[20, 20],
-            zoom_start=3,  
-            tiles=None,  # No default tiles to avoid conflicts
-            prefer_canvas=True,
-            world_copy_jump=False,  # Prevent infinite horizontal scrolling
-            no_wrap=True,  # Prevent map wrapping
-            max_bounds=True,  # Enable bounds restriction
-            min_zoom=1,
-            max_zoom=10,
-            zoom_control=True,  # Enable zoom controls
-            scroll_wheel_zoom=True,  # Enable mouse wheel zoom
-            double_click_zoom=True,  # Enable double-click zoom
-            dragging=True,  # Enable map dragging
-            touch_zoom=True,  # Enable touch zoom on mobile
-            keyboard=True,  # Enable keyboard navigation
-            box_zoom=True  # Enable box zoom
+            location=[20, 0],
+            zoom_start=2,
+            tiles='OpenStreetMap',  # Use simple, reliable tiles
+            prefer_canvas=True
         )
         
-        # Add minimal CSS for full viewport without breaking interactivity
-        viewport_css = """
+        # Add simple CSS
+        simple_css = """
         <style>
-        html, body {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        .folium-map {
-            width: 100vw;
-            height: 100vh;
-            margin: 0;
-            padding: 0;
-        }
-        .leaflet-container {
-            width: 100vw;
-            height: 100vh;
-        }
-        /* Enhanced styling for clickable countries */
-        .leaflet-interactive {
-            cursor: pointer !important;
-            transition: all 0.2s ease;
-        }
-        .leaflet-interactive:hover {
-            filter: brightness(1.1);
-            transform: scale(1.02);
-        }
+        html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+        .folium-map { width: 100vw; height: 100vh; }
         </style>
         """
-        m.get_root().html.add_child(folium.Element(viewport_css))
+        m.get_root().html.add_child(folium.Element(simple_css))
         
-        # Note: Removed fit_bounds to preserve zoom_start setting
+        # First, add ALL countries as background layer using simple styling
+        print("Adding background countries...")
+        try:
+            if len(other_countries) > 0:
+                folium.GeoJson(
+                    other_countries.__geo_interface__,  # Convert to proper GeoJSON
+                    style_function=lambda feature: {
+                        'fillColor': '#f0f0f0',
+                        'color': '#cccccc',
+                        'weight': 1,
+                        'fillOpacity': 0.7
+                    }
+                ).add_to(m)
+                print(f"✅ Added {len(other_countries)} background countries")
+            else:
+                print("❌ No background countries to add")
+        except Exception as e:
+            print(f"❌ Error adding background countries: {e}")
         
-        # Add the clean light theme base tile layer
-        folium.TileLayer(
-            tiles='CartoDB positron',
-            name='Base Map',
-            control=False,
-            overlay=False,
-            no_wrap=True  # Prevent tile wrapping
-        ).add_to(m)
-          # Add program countries with vibrant highlighting and direct click functionality
-        program_countries_layer = folium.GeoJson(
-            selected_countries,
-            style_function=lambda feature: self.get_country_style(feature),
-            tooltip=folium.GeoJsonTooltip(
-                fields=['shapeName', 'program_details'],
-                aliases=['Country:', 'Programs:'],
-                style="""
-                    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-                    border: none;
-                    border-radius: 15px;
-                    padding: 18px 24px;
-                    font-size: 16px;
-                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                    max-width: 350px;
-                    box-shadow: 0 12px 35px rgba(0,0,0,0.15), 0 0 0 3px #20c997, 0 0 25px rgba(32, 201, 151, 0.4);
-                    color: #2c3e50;
-                    backdrop-filter: blur(10px);
-                    -webkit-backdrop-filter: blur(10px);
-                    transform: translateY(-5px);
-                    transition: all 0.3s ease;
-                """,
-                sticky=False,
-                labels=True
-            ),
-            highlight_function=lambda feature: {
-                'weight': 3.5,
-                'color': '#17a2b8',
-                'fillOpacity': 0.9,
-                'fillColor': '#17a2b8'
-            },
-            name='Program Countries'
-        )
+        # Then add program countries on top
+        print("Adding program countries...")
+        try:
+            if len(selected_countries) > 0:
+                folium.GeoJson(
+                    selected_countries.__geo_interface__,  # Convert to proper GeoJSON
+                    style_function=lambda feature: {
+                        'fillColor': '#00cc66',  # Bright green
+                        'color': '#006633',      # Dark green border
+                        'weight': 2,
+                        'fillOpacity': 1.0
+                    },
+                    tooltip=folium.GeoJsonTooltip(
+                        fields=['shapeName'],
+                        aliases=['Country:']
+                    )
+                ).add_to(m)
+                print(f"✅ Added {len(selected_countries)} program countries")
+            else:
+                print("❌ No program countries to add")
+        except Exception as e:
+            print(f"❌ Error adding program countries: {e}")
+            # If GeoJSON conversion fails, try a different approach
+            print("Trying alternative method...")
+            try:
+                folium.GeoJson(
+                    selected_countries,
+                    style_function=lambda feature: {
+                        'fillColor': '#00cc66',
+                        'color': '#006633',
+                        'weight': 2,
+                        'fillOpacity': 1.0
+                    }
+                ).add_to(m)
+                print("✅ Alternative method worked")
+            except Exception as e2:
+                print(f"❌ Alternative method also failed: {e2}")
         
         # Add JavaScript for direct click functionality
         click_js = """
         <script>
-        // Add click event listener to all country polygons
         document.addEventListener('DOMContentLoaded', function() {
-            // Wait for map to load
             setTimeout(function() {
-                // Find all interactive elements (country polygons)
                 const countryElements = document.querySelectorAll('.leaflet-interactive');
-                
                 countryElements.forEach(function(element) {
                     element.addEventListener('click', function(e) {
-                        // Prevent default popup behavior
                         e.stopPropagation();
-                        
-                        // Open globtalent.org in new tab
                         window.open('https://globtalent.org', '_blank');
                     });
-                    
-                    // Add visual feedback for clickable elements
                     element.style.cursor = 'pointer';
                 });
             }, 1000);
@@ -374,38 +374,92 @@ class GlobalTalentMap:
         """
         m.get_root().html.add_child(folium.Element(click_js))
         
-        program_countries_layer.add_to(m)
-        
-        # Add legend
-        self.add_legend(m)
+        # Add simplified legend
+        self.add_simplified_legend(m)
         
         return m
+        
+        return m
+    
+    def add_simplified_legend(self, map_obj: folium.Map):
+        """Add a simplified legend"""
+        legend_html = '''
+        <div style="position: fixed; top: 10px; right: 10px; width: 200px; 
+                    background: white; border: 2px solid #00cc66; z-index: 9999; 
+                    padding: 15px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+            <h4 style="margin: 0 0 10px 0; color: #333;">Global Talent Map</h4>
+            <div style="margin: 5px 0;">
+                <span style="display: inline-block; width: 20px; height: 15px; 
+                           background: #00cc66; border: 1px solid #006633; margin-right: 5px;"></span>
+                Program Countries
+            </div>
+            <div style="margin: 5px 0;">
+                <span style="display: inline-block; width: 20px; height: 15px; 
+                           background: #f0f0f0; border: 1px solid #cccccc; margin-right: 5px;"></span>
+                Other Countries
+            </div>
+        </div>
+        '''
+        map_obj.get_root().html.add_child(folium.Element(legend_html))
     
     def add_legend(self, map_obj: folium.Map):
         """Add legend to the map"""
         legend_html = '''
         <div style="position: fixed; 
                     top: 10px; right: 10px; 
-                    width: min(220px, 45vw); height: min(260px, 50vh); 
-                    background: rgba(255,255,255,0.95); 
-                    color: #212529; border: 2px solid #20c997; 
+                    width: min(220px, 40vw); height: min(260px, 50vh); 
+                    background: white; 
+                    color: #1f2937; border: 2px solid #10b981; 
                     z-index: 9999; 
                     font-size: min(12px, 3vw); padding: min(15px, 3vw); border-radius: 8px; 
-                    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
                     overflow: auto;">
+            
+            <!-- Title -->
+            <div style="margin-bottom: 15px; padding: 8px; 
+                        background: #f0fdf4; 
+                        border-radius: 6px; text-align: center; border: 1px solid #10b981;">
+                <div style="font-size: min(13px, 3.2vw); color: #1f2937; font-weight: bold;">
+                    🌍 Global Talent Map
+                </div>
+                <div style="font-size: min(10px, 2.5vw); color: #6b7280; font-style: italic;">
+                    Equal Area Aware
+                </div>
+            </div>
             
             <!-- Program countries section -->
             <div style="margin-bottom: 15px; padding: 10px; 
-                        background: rgba(32, 201, 151, 0.1); 
-                        border-radius: 6px;">
+                        background: #f0fdf4; 
+                        border-radius: 6px; border: 1px solid #bbf7d0;">
                 <div style="display: flex; align-items: center; margin-bottom: 6px;">
                     <div style="width: min(16px, 4vw); height: min(10px, 2.5vw); 
-                               background: #20c997; 
-                               border: 1px solid #17a2b8; margin-right: 8px; 
+                               background: #10b981; 
+                               border: 1px solid #059669; margin-right: 8px; 
                                border-radius: 3px; flex-shrink: 0;"></div>
-                    <span style="font-weight: bold; color: #2c3e50; font-size: min(13px, 3.2vw);">
+                    <span style="font-weight: bold; color: #1f2937; font-size: min(12px, 3vw);">
                         Program Countries
                     </span>
+                </div>
+                <div style="font-size: min(9px, 2.3vw); color: #6b7280; margin-left: min(24px, 6vw);">
+                    Countries with active programs
+                </div>
+            </div>
+            
+            <!-- Background countries section -->
+            <div style="margin-bottom: 15px; padding: 10px; 
+                        background: #f8fafc; 
+                        border-radius: 6px; border: 1px solid #e2e8f0;">
+                <div style="display: flex; align-items: center; margin-bottom: 6px;">
+                    <div style="width: min(16px, 4vw); height: min(10px, 2.5vw); 
+                               background: #f1f5f9; 
+                               border: 1px solid #cbd5e1; margin-right: 8px; 
+                               border-radius: 3px; flex-shrink: 0;"></div>
+                    <span style="font-weight: bold; color: #1f2937; font-size: min(12px, 3vw);">
+                        Other Countries
+                    </span>
+                </div>
+                <div style="font-size: min(9px, 2.3vw); color: #6b7280; margin-left: min(24px, 6vw);">
+                    Reference countries
                 </div>
             </div>
             

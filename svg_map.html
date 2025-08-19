@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Talent Map - SVG World Map</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .map-app {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        
+        .map-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            cursor: grab;
+            overflow: hidden;
+            background: radial-gradient(ellipse at center, #1e293b 0%, #0f172a 100%);
+        }
+        
+        .map-container:active {
+            cursor: grabbing;
+        }
+        
+        .world-map {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .world-map svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .country-base {
+            fill: #374151;
+            stroke: #4b5563;
+            stroke-width: 0.5;
+            opacity: 0.8;
+        }
+        
+        .country-marker {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .country-marker:hover {
+            transform: scale(1.4);
+        }
+        
+        .marker-elite {
+            fill: #3b82f6;
+            stroke: #1d4ed8;
+            stroke-width: 2;
+            filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.6));
+            animation: pulseElite 3s ease-in-out infinite;
+        }
+        
+        .marker-high {
+            fill: #06b6d4;
+            stroke: #0891b2;
+            stroke-width: 2;
+            filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.6));
+            animation: pulseHigh 3s ease-in-out infinite 1s;
+        }
+        
+        .marker-active {
+            fill: #10b981;
+            stroke: #059669;
+            stroke-width: 2;
+            filter: drop-shadow(0 0 4px rgba(16, 185, 129, 0.6));
+            animation: pulseActive 3s ease-in-out infinite 2s;
+        }
+        
+        @keyframes pulseElite {
+            0%, 100% { filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.6)); }
+            50% { filter: drop-shadow(0 0 16px rgba(59, 130, 246, 0.9)); }
+        }
+        
+        @keyframes pulseHigh {
+            0%, 100% { filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.6)); }
+            50% { filter: drop-shadow(0 0 12px rgba(6, 182, 212, 0.9)); }
+        }
+        
+        @keyframes pulseActive {
+            0%, 100% { filter: drop-shadow(0 0 4px rgba(16, 185, 129, 0.6)); }
+            50% { filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.9)); }
+        }
+        
+        .marker-text {
+            fill: white;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+        }
+        
+        .legend {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 320px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: slideInRight 0.5s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .legend-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .legend-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 4px;
+        }
+        
+        .legend-subtitle {
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        
+        .legend-section {
+            margin-bottom: 20px;
+        }
+        
+        .legend-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 12px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .legend-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateX(4px);
+        }
+        
+        .legend-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .legend-color.elite {
+            background: radial-gradient(circle, #3b82f6 0%, #1d4ed8 100%);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+        }
+        
+        .legend-color.high {
+            background: radial-gradient(circle, #06b6d4 0%, #0891b2 100%);
+            box-shadow: 0 2px 8px rgba(6, 182, 212, 0.4);
+        }
+        
+        .legend-color.active {
+            background: radial-gradient(circle, #10b981 0%, #059669 100%);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+        }
+        
+        .legend-text {
+            font-size: 13px;
+            color: #e2e8f0;
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .legend-count {
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 500;
+            background: rgba(59, 130, 246, 0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            min-width: 24px;
+            text-align: center;
+        }
+        
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1000;
+            animation: slideInLeft 0.5s ease-out;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 18px;
+            color: #e2e8f0;
+            user-select: none;
+        }
+        
+        .control-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+        }
+        
+        .control-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+        
+        .stats {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: slideInUp 0.5s ease-out;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .stats-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+        }
+        
+        .stats-grid {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #3b82f6;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-number:hover {
+            transform: scale(1.1);
+            color: #60a5fa;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+            z-index: 1001;
+            max-width: 300px;
+            transform: translateY(-10px);
+            animation: fadeInUp 0.3s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(-10px);
+            }
+        }
+        
+        .tooltip-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+        }
+        
+        .tooltip-content {
+            font-size: 14px;
+            color: #e2e8f0;
+            line-height: 1.5;
+        }
+        
+        .tooltip-programs {
+            margin-top: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        
+        .tooltip-program {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .tooltip-program.star { background: #3b82f6; }
+        .tooltip-program.nations { background: #f59e0b; }
+        .tooltip-program.big { background: #10b981; }
+        .tooltip-program.excl { background: #ef4444; }
+        
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 2000;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-top: 16px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(59, 130, 246, 0.3);
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        
+        // Program data with SVG coordinates (manually positioned for accuracy)
+        const programData = {
+            "United States": { 
+                programs: ["STAR", "NATIONS", "BIG"],
+                position: { x: 240, y: 180 }
+            },
+            "Canada": { 
+                programs: ["STAR", "NATIONS"],
+                position: { x: 260, y: 120 }
+            },
+            "Brazil": { 
+                programs: ["BIG"],
+                position: { x: 340, y: 280 }
+            },
+            "United Kingdom": { 
+                programs: ["STAR", "EXCL"],
+                position: { x: 480, y: 150 }
+            },
+            "Germany": { 
+                programs: ["STAR", "NATIONS", "EXCL"],
+                position: { x: 520, y: 150 }
+            },
+            "France": { 
+                programs: ["NATIONS"],
+                position: { x: 500, y: 160 }
+            },
+            "India": { 
+                programs: ["BIG", "STAR"],
+                position: { x: 720, y: 200 }
+            },
+            "China": { 
+                programs: ["BIG"],
+                position: { x: 760, y: 170 }
+            },
+            "Japan": { 
+                programs: ["STAR", "NATIONS"],
+                position: { x: 840, y: 170 }
+            },
+            "Australia": { 
+                programs: ["STAR", "NATIONS", "BIG"],
+                position: { x: 820, y: 350 }
+            },
+            "Nigeria": { 
+                programs: ["BIG"],
+                position: { x: 520, y: 220 }
+            },
+            "South Africa": { 
+                programs: ["NATIONS"],
+                position: { x: 560, y: 320 }
+            },
+            "Kenya": { 
+                programs: ["STAR"],
+                position: { x: 580, y: 240 }
+            },
+            "Italy": { 
+                programs: ["EXCL"],
+                position: { x: 540, y: 160 }
+            },
+            "Russia": { 
+                programs: ["NATIONS", "EXCL"],
+                position: { x: 660, y: 120 }
+            },
+            "Mexico": { 
+                programs: ["BIG"],
+                position: { x: 220, y: 200 }
+            },
+            "Argentina": { 
+                programs: ["STAR"],
+                position: { x: 350, y: 380 }
+            },
+            "Colombia": { 
+                programs: ["NATIONS"],
+                position: { x: 320, y: 240 }
+            },
+            "Egypt": { 
+                programs: ["BIG", "STAR"],
+                position: { x: 580, y: 190 }
+            },
+            "Kazakhstan": { 
+                programs: ["NATIONS"],
+                position: { x: 680, y: 140 }
+            }
+        };
+        
+        function getParticipationLevel(programs) {
+            if (!programs || programs.length === 0) return 'none';
+            if (programs.length >= 3) return 'elite';
+            if (programs.length === 2) return 'high';
+            return 'active';
+        }
+        
+        function getMarkerLabel(level) {
+            switch(level) {
+                case 'elite': return '💎';
+                case 'high': return '🔷';
+                case 'active': return '🔹';
+                default: return '';
+            }
+        }
+        
+        function GlobalTalentMap() {
+            const [loading, setLoading] = useState(true);
+            const [zoom, setZoom] = useState(1);
+            const [position, setPosition] = useState({ x: 0, y: 0 });
+            const [tooltip, setTooltip] = useState(null);
+            const [stats, setStats] = useState({ elite: 0, high: 0, active: 0, totalPrograms: 0 });
+            const mapRef = useRef(null);
+            const isDragging = useRef(false);
+            const lastPosition = useRef({ x: 0, y: 0 });
+            
+            useEffect(() => {
+                // Calculate statistics
+                const newStats = { elite: 0, high: 0, active: 0, totalPrograms: 0 };
+                
+                Object.entries(programData).forEach(([country, data]) => {
+                    const level = getParticipationLevel(data.programs);
+                    newStats[level]++;
+                    newStats.totalPrograms += data.programs.length;
+                });
+                
+                setStats(newStats);
+                
+                // Simulate loading
+                setTimeout(() => setLoading(false), 1500);
+            }, []);
+            
+            const handleMouseDown = (e) => {
+                isDragging.current = true;
+                lastPosition.current = { x: e.clientX, y: e.clientY };
+            };
+            
+            const handleMouseMove = (e) => {
+                if (!isDragging.current) return;
+                
+                const deltaX = e.clientX - lastPosition.current.x;
+                const deltaY = e.clientY - lastPosition.current.y;
+                
+                setPosition(prev => ({
+                    x: prev.x + deltaX,
+                    y: prev.y + deltaY
+                }));
+                
+                lastPosition.current = { x: e.clientX, y: e.clientY };
+            };
+            
+            const handleMouseUp = () => {
+                isDragging.current = false;
+            };
+            
+            const handleWheel = (e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                setZoom(prev => Math.max(0.5, Math.min(3, prev * delta)));
+            };
+            
+            const handleCountryHover = (e, country, data) => {
+                setTooltip({
+                    x: e.clientX,
+                    y: e.clientY,
+                    country,
+                    programs: data.programs
+                });
+            };
+            
+            const handleCountryLeave = () => {
+                setTooltip(null);
+            };
+            
+            const handleCountryClick = () => {
+                window.open('https://globtalent.org', '_blank');
+            };
+            
+            const zoomIn = () => setZoom(prev => Math.min(3, prev * 1.2));
+            const zoomOut = () => setZoom(prev => Math.max(0.5, prev / 1.2));
+            const resetView = () => {
+                setZoom(1);
+                setPosition({ x: 0, y: 0 });
+            };
+            
+            if (loading) {
+                return (
+                    <div className="loading">
+                        <div className="spinner"></div>
+                        <div className="loading-text">Loading Global Talent Map...</div>
+                    </div>
+                );
+            }
+            
+            return (
+                <div className="map-app">
+                    <div className="controls">
+                        <div className="control-btn" onClick={zoomIn} title="Zoom In">+</div>
+                        <div className="control-btn" onClick={zoomOut} title="Zoom Out">−</div>
+                        <div className="control-btn" onClick={resetView} title="Reset View">⌂</div>
+                    </div>
+                    
+                    <div 
+                        className="map-container"
+                        onMouseDown={handleMouseDown}
+                        onMouseMove={handleMouseMove}
+                        onMouseUp={handleMouseUp}
+                        onWheel={handleWheel}
+                        ref={mapRef}
+                    >
+                        <div 
+                            className="world-map"
+                            style={{
+                                transform: `translate(${position.x}px, ${position.y}px) scale(${zoom})`
+                            }}
+                        >
+                            <svg viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+                                {/* Simple world map outline */}
+                                <rect width="1000" height="500" fill="#1e293b" />
+                                
+                                {/* Continents as simplified shapes */}
+                                <path d="M 150 100 L 400 90 L 420 200 L 380 300 L 300 320 L 200 280 L 150 200 Z" className="country-base" />
+                                <path d="M 450 120 L 600 110 L 620 200 L 580 250 L 500 240 L 450 180 Z" className="country-base" />
+                                <path d="M 650 150 L 900 140 L 920 300 L 850 350 L 700 340 L 650 250 Z" className="country-base" />
+                                <path d="M 750 320 L 950 310 L 970 450 L 800 460 L 750 380 Z" className="country-base" />
+                                <path d="M 400 200 L 650 190 L 670 400 L 500 410 L 400 300 Z" className="country-base" />
+                                <path d="M 250 280 L 450 270 L 470 450 L 300 460 L 250 350 Z" className="country-base" />
+                                
+                                {/* Country markers */}
+                                {Object.entries(programData).map(([country, data]) => {
+                                    const level = getParticipationLevel(data.programs);
+                                    const label = getMarkerLabel(level);
+                                    
+                                    return (
+                                        <g key={country}>
+                                            <circle
+                                                cx={data.position.x}
+                                                cy={data.position.y}
+                                                r="16"
+                                                className={`country-marker marker-${level}`}
+                                                onMouseEnter={(e) => handleCountryHover(e, country, data)}
+                                                onMouseLeave={handleCountryLeave}
+                                                onClick={handleCountryClick}
+                                            />
+                                            <text
+                                                x={data.position.x}
+                                                y={data.position.y}
+                                                className="marker-text"
+                                            >
+                                                {label}
+                                            </text>
+                                        </g>
+                                    );
+                                })}
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div className="legend">
+                        <div className="legend-header">
+                            <div className="legend-title">🌍 Global Talent Map</div>
+                            <div className="legend-subtitle">React • Interactive • SVG</div>
+                        </div>
+                        
+                        <div className="legend-section">
+                            <div className="legend-section-title">Program Participation</div>
+                            
+                            <div className="legend-item">
+                                <div className="legend-color elite"></div>
+                                <div className="legend-text">Elite (3+ programs) 💎</div>
+                                <div className="legend-count">{stats.elite}</div>
+                            </div>
+                            
+                            <div className="legend-item">
+                                <div className="legend-color high"></div>
+                                <div className="legend-text">High (2 programs) 🔷</div>
+                                <div className="legend-count">{stats.high}</div>
+                            </div>
+                            
+                            <div className="legend-item">
+                                <div className="legend-color active"></div>
+                                <div className="legend-text">Active (1 program) 🔹</div>
+                                <div className="legend-count">{stats.active}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="stats">
+                        <div className="stats-title">📊 Program Statistics</div>
+                        <div className="stats-grid">
+                            <div className="stat-item">
+                                <div className="stat-number">{Object.keys(programData).length}</div>
+                                <div className="stat-label">Countries</div>
+                            </div>
+                            <div className="stat-item">
+                                <div className="stat-number">{stats.totalPrograms}</div>
+                                <div className="stat-label">Programs</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {tooltip && (
+                        <div 
+                            className="tooltip"
+                            style={{
+                                left: tooltip.x + 10,
+                                top: tooltip.y - 10
+                            }}
+                        >
+                            <div className="tooltip-title">{tooltip.country}</div>
+                            <div className="tooltip-content">
+                                {tooltip.programs.length > 0 ? (
+                                    <>
+                                        <div>Programs ({tooltip.programs.length}):</div>
+                                        <div className="tooltip-programs">
+                                            {tooltip.programs.map(program => (
+                                                <span 
+                                                    key={program}
+                                                    className={`tooltip-program ${program.toLowerCase()}`}
+                                                >
+                                                    {program}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div>No program participation</div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+        
+        ReactDOM.render(<GlobalTalentMap />, document.getElementById('root'));
+    </script>
+</body>
+</html>

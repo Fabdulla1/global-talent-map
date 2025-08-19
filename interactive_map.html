@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Talent Map - Interactive</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .map-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            cursor: grab;
+        }
+        
+        .map-container:active {
+            cursor: grabbing;
+        }
+        
+        .world-map {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+        
+        /* Base country styling */
+        .country-path {
+            fill: #f8fafc;
+            stroke: #e2e8f0;
+            stroke-width: 0.5;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .country-path:hover {
+            stroke: #cbd5e1;
+            stroke-width: 1;
+        }
+        
+        /* Program country styling */
+        .country-path.elite {
+            fill: #1e293b;
+            stroke: #f1f5f9;
+            stroke-width: 1.5;
+        }
+        
+        .country-path.high {
+            fill: #334155;
+            stroke: #f1f5f9;
+            stroke-width: 1.2;
+        }
+        
+        .country-path.active {
+            fill: #475569;
+            stroke: #f1f5f9;
+            stroke-width: 1;
+        }
+        
+        .country-path.elite:hover {
+            fill: #0f172a;
+            filter: brightness(1.3) saturate(1.4);
+            stroke: #ffffff;
+            stroke-width: 2.5;
+            transform: scale(1.02);
+        }
+        
+        .country-path.high:hover {
+            fill: #1e293b;
+            filter: brightness(1.2) saturate(1.3);
+            stroke: #ffffff;
+            stroke-width: 2;
+            transform: scale(1.02);
+        }
+        
+        .country-path.active:hover {
+            fill: #334155;
+            filter: brightness(1.15) saturate(1.2);
+            stroke: #ffffff;
+            stroke-width: 1.8;
+            transform: scale(1.02);
+        }
+        
+        /* Legend */
+        .legend {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 320px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(30, 41, 59, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .legend:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+        
+        .legend-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .legend-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .legend-subtitle {
+            font-size: 13px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .legend-section {
+            margin-bottom: 20px;
+        }
+        
+        .legend-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 12px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.2s ease;
+        }
+        
+        .legend-item:hover {
+            background: #f0fdf4;
+        }
+        
+        .legend-color {
+            width: 24px;
+            height: 16px;
+            border-radius: 4px;
+            margin-right: 12px;
+            border: 2px solid #f1f5f9;
+            flex-shrink: 0;
+        }
+        
+        .legend-color.elite {
+            background: #1e293b;
+            box-shadow: 0 2px 8px rgba(30, 41, 59, 0.4);
+        }
+        
+        .legend-color.high {
+            background: #334155;
+            box-shadow: 0 2px 8px rgba(51, 65, 85, 0.4);
+        }
+        
+        .legend-color.active {
+            background: #475569;
+            box-shadow: 0 2px 8px rgba(71, 85, 105, 0.4);
+        }
+        
+        .legend-color.none {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .legend-text {
+            font-size: 13px;
+            color: #374151;
+            font-weight: 600;
+        }
+        
+        .legend-text.muted {
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .legend-count {
+            color: #6b7280;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: auto;
+        }
+        
+        /* Program Colors */
+        .program-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+        }
+        
+        .program-dot.star { background: #3b82f6; }
+        .program-dot.nations { background: #f59e0b; }
+        .program-dot.big { background: #10b981; }
+        .program-dot.excl { background: #ef4444; }
+        
+        .program-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        
+        .program-text {
+            font-size: 12px;
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        /* Statistics */
+        .stats {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(30, 41, 59, 0.1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+        }
+        
+        .stats-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .stats-grid {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #059669;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        /* Controls */
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1000;
+        }
+        
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(30, 41, 59, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 18px;
+            color: #374151;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(30, 41, 59, 0.1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+            max-width: 300px;
+        }
+        
+        .tooltip.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .tooltip-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        
+        .tooltip-content {
+            font-size: 14px;
+            color: #374151;
+            line-height: 1.5;
+        }
+        
+        .tooltip-programs {
+            margin-top: 8px;
+        }
+        
+        .tooltip-program {
+            display: inline-block;
+            padding: 2px 8px;
+            margin: 2px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .tooltip-program.star { background: #3b82f6; }
+        .tooltip-program.nations { background: #f59e0b; }
+        .tooltip-program.big { background: #10b981; }
+        .tooltip-program.excl { background: #ef4444; }
+        
+        /* Loading */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 2000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #374151;
+            margin-top: 16px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e5e7eb;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .legend {
+                width: 280px;
+                top: 10px;
+                right: 10px;
+                padding: 16px;
+            }
+            
+            .stats {
+                bottom: 10px;
+                left: 10px;
+                padding: 12px 16px;
+            }
+            
+            .controls {
+                top: 10px;
+                left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading Global Talent Map...</div>
+    </div>
+    
+    <div class="controls">
+        <div class="control-btn" onclick="zoomIn()" title="Zoom In">+</div>
+        <div class="control-btn" onclick="zoomOut()" title="Zoom Out">−</div>
+        <div class="control-btn" onclick="resetView()" title="Reset View">⌂</div>
+    </div>
+    
+    <div class="map-container" id="mapContainer">
+        <svg class="world-map" id="worldMap" viewBox="0 0 1000 500">
+            <!-- World map will be loaded here -->
+        </svg>
+    </div>
+    
+    <div class="legend">
+        <div class="legend-header">
+            <div class="legend-title">💎 Global Talent Map</div>
+            <div class="legend-subtitle">Interactive • Modern • Sophisticated</div>
+        </div>
+        
+        <div class="legend-section">
+            <div class="legend-section-title">Program Participation</div>
+            
+            <div class="legend-item">
+                <div class="legend-color elite"></div>
+                <div>
+                    <div class="legend-text">Elite (3+ programs) 💎</div>
+                </div>
+                <div class="legend-count" id="eliteCount">0</div>
+            </div>
+            
+            <div class="legend-item">
+                <div class="legend-color high"></div>
+                <div>
+                    <div class="legend-text">High (2 programs) 🔷</div>
+                </div>
+                <div class="legend-count" id="highCount">0</div>
+            </div>
+            
+            <div class="legend-item">
+                <div class="legend-color active"></div>
+                <div>
+                    <div class="legend-text">Active (1 program) 🔹</div>
+                </div>
+                <div class="legend-count" id="activeCount">0</div>
+            </div>
+            
+            <div class="legend-item">
+                <div class="legend-color none"></div>
+                <div>
+                    <div class="legend-text muted">No Programs</div>
+                </div>
+                <div class="legend-count" id="noneCount">0</div>
+            </div>
+        </div>
+        
+        <div class="legend-section">
+            <div class="legend-section-title">Program Types</div>
+            
+            <div class="program-item">
+                <div class="program-dot star"></div>
+                <div class="program-text">STAR</div>
+            </div>
+            
+            <div class="program-item">
+                <div class="program-dot nations"></div>
+                <div class="program-text">NATIONS</div>
+            </div>
+            
+            <div class="program-item">
+                <div class="program-dot big"></div>
+                <div class="program-text">BIG</div>
+            </div>
+            
+            <div class="program-item">
+                <div class="program-dot excl"></div>
+                <div class="program-text">EXCL</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stats">
+        <div class="stats-title">📊 Program Statistics</div>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number" id="countryCount">0</div>
+                <div class="stat-label">Countries</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="programCount">0</div>
+                <div class="stat-label">Programs</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tooltip" id="tooltip">
+        <div class="tooltip-title" id="tooltipTitle">Country Name</div>
+        <div class="tooltip-content" id="tooltipContent">
+            <div id="tooltipText">Program details...</div>
+            <div class="tooltip-programs" id="tooltipPrograms"></div>
+        </div>
+    </div>
+    
+    <script>
+        let currentZoom = 1;
+        let currentX = 0;
+        let currentY = 0;
+        let isDragging = false;
+        let startX, startY;
+        
+        // Sample world map paths (simplified for demo)
+        const worldMapPaths = `
+            <!-- North America -->
+            <path d="M150 150 L200 140 L250 160 L220 200 L170 190 Z" class="country-path" data-country="United States"/>
+            <path d="M140 120 L190 110 L210 140 L160 150 Z" class="country-path" data-country="Canada"/>
+            <path d="M160 220 L210 210 L240 250 L190 260 Z" class="country-path" data-country="Mexico"/>
+            
+            <!-- South America -->
+            <path d="M220 280 L270 270 L260 350 L210 340 Z" class="country-path" data-country="Brazil"/>
+            <path d="M200 320 L240 310 L230 360 L190 350 Z" class="country-path" data-country="Argentina"/>
+            <path d="M180 270 L220 260 L210 300 L170 290 Z" class="country-path" data-country="Colombia"/>
+            
+            <!-- Europe -->
+            <path d="M480 180 L520 170 L510 210 L470 200 Z" class="country-path" data-country="United Kingdom"/>
+            <path d="M500 190 L540 180 L530 220 L490 210 Z" class="country-path" data-country="France"/>
+            <path d="M520 180 L560 170 L550 210 L510 200 Z" class="country-path" data-country="Germany"/>
+            <path d="M540 200 L580 190 L570 230 L530 220 Z" class="country-path" data-country="Italy"/>
+            <path d="M520 160 L580 150 L590 200 L540 190 Z" class="country-path" data-country="Russia"/>
+            
+            <!-- Africa -->
+            <path d="M480 250 L540 240 L530 320 L470 310 Z" class="country-path" data-country="Nigeria"/>
+            <path d="M520 300 L580 290 L570 370 L510 360 Z" class="country-path" data-country="South Africa"/>
+            <path d="M500 280 L560 270 L550 330 L490 320 Z" class="country-path" data-country="Kenya"/>
+            <path d="M460 260 L520 250 L510 310 L450 300 Z" class="country-path" data-country="Egypt"/>
+            
+            <!-- Asia -->
+            <path d="M700 200 L760 190 L750 250 L690 240 Z" class="country-path" data-country="China"/>
+            <path d="M660 250 L720 240 L710 320 L650 310 Z" class="country-path" data-country="India"/>
+            <path d="M780 220 L820 210 L810 260 L770 250 Z" class="country-path" data-country="Japan"/>
+            <path d="M600 160 L680 150 L690 220 L620 210 Z" class="country-path" data-country="Kazakhstan"/>
+            
+            <!-- Oceania -->
+            <path d="M780 350 L840 340 L830 390 L770 380 Z" class="country-path" data-country="Australia"/>
+            <path d="M850 320 L880 310 L870 340 L840 330 Z" class="country-path" data-country="New Zealand"/>
+        `;
+        
+        // Program data from Excel (simulated)
+        const programData = {
+            "United States": ["STAR", "NATIONS", "BIG"],
+            "Canada": ["STAR", "NATIONS"],
+            "Brazil": ["BIG"],
+            "United Kingdom": ["STAR", "EXCL"],
+            "Germany": ["STAR", "NATIONS", "EXCL"],
+            "France": ["NATIONS"],
+            "India": ["BIG", "STAR"],
+            "China": ["BIG"],
+            "Japan": ["STAR", "NATIONS"],
+            "Australia": ["STAR", "NATIONS", "BIG"],
+            "Nigeria": ["BIG"],
+            "South Africa": ["NATIONS"],
+            "Kenya": ["STAR"],
+            "Italy": ["EXCL"],
+            "Russia": ["NATIONS", "EXCL"],
+            "Mexico": ["BIG"],
+            "Argentina": ["STAR"],
+            "Colombia": ["NATIONS"],
+            "Egypt": ["BIG", "STAR"],
+            "Kazakhstan": ["NATIONS"]
+        };
+        
+        function getParticipationLevel(programs) {
+            if (!programs || programs.length === 0) return 'none';
+            if (programs.length >= 3) return 'elite';
+            if (programs.length === 2) return 'high';
+            return 'active';
+        }
+        
+        function initializeMap() {
+            const worldMap = document.getElementById('worldMap');
+            worldMap.innerHTML = worldMapPaths;
+            
+            const countries = worldMap.querySelectorAll('.country-path');
+            let stats = { elite: 0, high: 0, active: 0, none: 0, totalPrograms: 0 };
+            
+            countries.forEach(country => {
+                const countryName = country.getAttribute('data-country');
+                const programs = programData[countryName] || [];
+                const level = getParticipationLevel(programs);
+                
+                country.classList.add(level);
+                stats[level]++;
+                stats.totalPrograms += programs.length;
+                
+                // Add event listeners
+                country.addEventListener('mouseenter', (e) => {
+                    showTooltip(e, countryName, programs);
+                });
+                
+                country.addEventListener('mouseleave', hideTooltip);
+                
+                country.addEventListener('click', () => {
+                    window.open('https://globtalent.org', '_blank');
+                });
+            });
+            
+            // Update statistics
+            document.getElementById('eliteCount').textContent = stats.elite;
+            document.getElementById('highCount').textContent = stats.high;
+            document.getElementById('activeCount').textContent = stats.active;
+            document.getElementById('noneCount').textContent = stats.none;
+            document.getElementById('countryCount').textContent = Object.keys(programData).length;
+            document.getElementById('programCount').textContent = stats.totalPrograms;
+            
+            // Add pan/zoom functionality
+            setupMapInteractions();
+            
+            // Hide loading
+            document.getElementById('loading').style.display = 'none';
+        }
+        
+        function showTooltip(e, countryName, programs) {
+            const tooltip = document.getElementById('tooltip');
+            const title = document.getElementById('tooltipTitle');
+            const text = document.getElementById('tooltipText');
+            const programsEl = document.getElementById('tooltipPrograms');
+            
+            title.textContent = countryName;
+            
+            if (programs && programs.length > 0) {
+                text.innerHTML = `<strong>Programs (${programs.length}):</strong>`;
+                programsEl.innerHTML = programs.map(p => 
+                    `<span class="tooltip-program ${p.toLowerCase()}">${p}</span>`
+                ).join('');
+            } else {
+                text.textContent = 'No program participation';
+                programsEl.innerHTML = '';
+            }
+            
+            tooltip.style.left = `${e.pageX + 10}px`;
+            tooltip.style.top = `${e.pageY - 10}px`;
+            tooltip.classList.add('show');
+        }
+        
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.classList.remove('show');
+        }
+        
+        function setupMapInteractions() {
+            const mapContainer = document.getElementById('mapContainer');
+            const worldMap = document.getElementById('worldMap');
+            
+            // Mouse events for panning
+            mapContainer.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX - currentX;
+                startY = e.clientY - currentY;
+                mapContainer.style.cursor = 'grabbing';
+            });
+            
+            mapContainer.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                currentX = e.clientX - startX;
+                currentY = e.clientY - startY;
+                updateMapTransform();
+            });
+            
+            mapContainer.addEventListener('mouseup', () => {
+                isDragging = false;
+                mapContainer.style.cursor = 'grab';
+            });
+            
+            // Wheel zoom
+            mapContainer.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                currentZoom = Math.max(0.5, Math.min(3, currentZoom * delta));
+                updateMapTransform();
+            });
+        }
+        
+        function updateMapTransform() {
+            const worldMap = document.getElementById('worldMap');
+            worldMap.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentZoom})`;
+        }
+        
+        function zoomIn() {
+            currentZoom = Math.min(3, currentZoom * 1.2);
+            updateMapTransform();
+        }
+        
+        function zoomOut() {
+            currentZoom = Math.max(0.5, currentZoom / 1.2);
+            updateMapTransform();
+        }
+        
+        function resetView() {
+            currentZoom = 1;
+            currentX = 0;
+            currentY = 0;
+            updateMapTransform();
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            setTimeout(initializeMap, 1000);
+        });
+    </script>
+</body>
+</html>

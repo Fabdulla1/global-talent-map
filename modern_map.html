@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Talent Map</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .map-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        
+        .world-map {
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwMCIgaGVpZ2h0PSI1MDAiIHZpZXdCb3g9IjAgMCAxMDAwIDUwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEwMDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjZjhmYWZjIi8+Cjx0ZXh0IHg9IjUwMCIgeT0iMjUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNmI3MjgwIiBmb250LWZhbWlseT0iSW50ZXIiIGZvbnQtc2l6ZT0iMjQiPkxvYWRpbmcgTWFwLi4uPC90ZXh0Pgo8L3N2Zz4K') center/cover no-repeat;
+        }
+        
+        /* Program Countries */
+        .country {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 4px;
+            border: 2px solid #f1f5f9;
+        }
+        
+        .country.elite {
+            background: #1e293b;
+            box-shadow: 0 2px 8px rgba(30, 41, 59, 0.3);
+        }
+        
+        .country.high {
+            background: #334155;
+            box-shadow: 0 2px 6px rgba(51, 65, 85, 0.3);
+        }
+        
+        .country.active {
+            background: #475569;
+            box-shadow: 0 2px 4px rgba(71, 85, 105, 0.3);
+        }
+        
+        .country:hover {
+            filter: brightness(1.3) saturate(1.4);
+            box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.8), 
+                        0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
+            z-index: 100;
+        }
+        
+        /* Legend */
+        .legend {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 320px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(30, 41, 59, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        
+        .legend-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .legend-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+        
+        .legend-subtitle {
+            font-size: 13px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .legend-section {
+            margin-bottom: 20px;
+        }
+        
+        .legend-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 12px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.2s ease;
+        }
+        
+        .legend-item:hover {
+            background: #f0fdf4;
+        }
+        
+        .legend-color {
+            width: 24px;
+            height: 16px;
+            border-radius: 4px;
+            margin-right: 12px;
+            border: 2px solid #f1f5f9;
+        }
+        
+        .legend-color.elite {
+            background: #1e293b;
+            box-shadow: 0 2px 8px rgba(30, 41, 59, 0.4);
+        }
+        
+        .legend-color.high {
+            background: #334155;
+            box-shadow: 0 2px 8px rgba(51, 65, 85, 0.4);
+        }
+        
+        .legend-color.active {
+            background: #475569;
+            box-shadow: 0 2px 8px rgba(71, 85, 105, 0.4);
+        }
+        
+        .legend-color.none {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .legend-text {
+            font-size: 13px;
+            color: #374151;
+            font-weight: 600;
+        }
+        
+        .legend-text.muted {
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        /* Program Colors */
+        .program-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .program-dot.star { background: #3b82f6; }
+        .program-dot.nations { background: #f59e0b; }
+        .program-dot.big { background: #10b981; }
+        .program-dot.excl { background: #ef4444; }
+        
+        .program-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        
+        .program-text {
+            font-size: 12px;
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        /* Statistics */
+        .stats {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(30, 41, 59, 0.1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+        }
+        
+        .stats-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .stats-grid {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #059669;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(30, 41, 59, 0.1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+            max-width: 300px;
+        }
+        
+        .tooltip.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .tooltip-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        
+        .tooltip-content {
+            font-size: 14px;
+            color: #374151;
+            line-height: 1.5;
+        }
+        
+        /* Loading */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 2000;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #374151;
+            margin-top: 16px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e5e7eb;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading Global Talent Map...</div>
+    </div>
+    
+    <div class="map-container" id="mapContainer">
+        <!-- Map will be loaded here -->
+    </div>
+    
+    <div class="legend">
+        <div class="legend-header">
+            <div class="legend-title">💎 Global Talent Map</div>
+            <div class="legend-subtitle">Modern • Interactive • Sophisticated</div>
+        </div>
+        
+        <div class="legend-section">
+            <div class="legend-section-title">Program Participation</div>
+            
+            <div class="legend-item">
+                <div class="legend-color elite"></div>
+                <div class="legend-text">3+ Programs (ELITE PARTICIPATION) 💎</div>
+            </div>
+            
+            <div class="legend-item">
+                <div class="legend-color high"></div>
+                <div class="legend-text">2 Programs (HIGH PARTICIPATION) 🔷</div>
+            </div>
+            
+            <div class="legend-item">
+                <div class="legend-color active"></div>
+                <div class="legend-text">1 Program (ACTIVE PARTICIPATION) 🔹</div>
+            </div>
+            
+            <div class="legend-item">
+                <div class="legend-color none"></div>
+                <div class="legend-text muted">No Programs</div>
+            </div>
+        </div>
+        
+        <div class="legend-section">
+            <div class="legend-section-title">Program Types</div>
+            
+            <div class="program-item">
+                <div class="program-dot star"></div>
+                <div class="program-text">STAR</div>
+            </div>
+            
+            <div class="program-item">
+                <div class="program-dot nations"></div>
+                <div class="program-text">NATIONS</div>
+            </div>
+            
+            <div class="program-item">
+                <div class="program-dot big"></div>
+                <div class="program-text">BIG</div>
+            </div>
+            
+            <div class="program-item">
+                <div class="program-dot excl"></div>
+                <div class="program-text">EXCL</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stats">
+        <div class="stats-title">📊 Program Statistics</div>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number" id="countryCount">52</div>
+                <div class="stat-label">Countries</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="programCount">100</div>
+                <div class="stat-label">Programs</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tooltip" id="tooltip">
+        <div class="tooltip-title" id="tooltipTitle">Country Name</div>
+        <div class="tooltip-content" id="tooltipContent">Program details...</div>
+    </div>
+    
+    <script>
+        // Sample data - replace with your actual data
+        const programCountries = [
+            { name: "United States", programs: ["STAR", "NATIONS", "BIG"], participation: "elite", x: 15, y: 25 },
+            { name: "Canada", programs: ["STAR", "NATIONS"], participation: "high", x: 12, y: 15 },
+            { name: "Brazil", programs: ["BIG"], participation: "active", x: 30, y: 60 },
+            { name: "United Kingdom", programs: ["STAR", "EXCL"], participation: "high", x: 48, y: 20 },
+            { name: "Germany", programs: ["STAR", "NATIONS", "EXCL"], participation: "elite", x: 52, y: 22 },
+            { name: "France", programs: ["NATIONS"], participation: "active", x: 50, y: 24 },
+            { name: "India", programs: ["BIG", "STAR"], participation: "high", x: 75, y: 35 },
+            { name: "China", programs: ["BIG"], participation: "active", x: 78, y: 30 },
+            { name: "Japan", programs: ["STAR", "NATIONS"], participation: "high", x: 85, y: 32 },
+            { name: "Australia", programs: ["STAR", "NATIONS", "BIG"], participation: "elite", x: 88, y: 70 },
+            // Add more countries as needed
+        ];
+        
+        function createCountryElement(country) {
+            const countryEl = document.createElement('div');
+            countryEl.className = `country ${country.participation}`;
+            countryEl.style.left = `${country.x}%`;
+            countryEl.style.top = `${country.y}%`;
+            countryEl.style.width = '20px';
+            countryEl.style.height = '15px';
+            
+            countryEl.addEventListener('mouseenter', (e) => {
+                showTooltip(e, country);
+            });
+            
+            countryEl.addEventListener('mouseleave', () => {
+                hideTooltip();
+            });
+            
+            countryEl.addEventListener('click', () => {
+                window.open('https://globtalent.org', '_blank');
+            });
+            
+            return countryEl;
+        }
+        
+        function showTooltip(e, country) {
+            const tooltip = document.getElementById('tooltip');
+            const title = document.getElementById('tooltipTitle');
+            const content = document.getElementById('tooltipContent');
+            
+            title.textContent = country.name;
+            content.innerHTML = `
+                <strong>Programs (${country.programs.length}):</strong><br>
+                ${country.programs.map(p => `• ${p}`).join('<br>')}
+            `;
+            
+            tooltip.style.left = `${e.pageX + 10}px`;
+            tooltip.style.top = `${e.pageY - 10}px`;
+            tooltip.classList.add('show');
+        }
+        
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.classList.remove('show');
+        }
+        
+        function initializeMap() {
+            const mapContainer = document.getElementById('mapContainer');
+            
+            // Create world map SVG background (simplified)
+            const worldSVG = `
+                <svg width="100%" height="100%" viewBox="0 0 1000 500" style="position: absolute; top: 0; left: 0;">
+                    <rect width="1000" height="500" fill="#f8fafc"/>
+                    <!-- Simplified world map paths would go here -->
+                    <text x="500" y="250" text-anchor="middle" fill="#6b7280" font-family="Inter" font-size="16">
+                        Sophisticated Global Talent Map
+                    </text>
+                </svg>
+            `;
+            
+            mapContainer.innerHTML = worldSVG;
+            
+            // Add program countries
+            programCountries.forEach(country => {
+                const countryEl = createCountryElement(country);
+                mapContainer.appendChild(countryEl);
+            });
+            
+            // Hide loading
+            document.getElementById('loading').style.display = 'none';
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            setTimeout(initializeMap, 1000); // Simulate loading
+        });
+    </script>
+</body>
+</html>

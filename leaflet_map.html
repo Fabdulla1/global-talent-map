@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Talent Map - Leaflet Version</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #25313c !important; /* Match CartoDB dark map background */
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .map-app {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background-color: #25313c; /* Ensure map container also has dark background */
+        }
+        
+        #map {
+            width: 100%;
+            height: 100%;
+            background-color: #25313c !important; /* Force dark background on map element */
+        }
+        
+        .custom-marker {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .custom-marker:hover {
+            transform: scale(1.3);
+        }
+        
+        .marker-elite {
+            background: radial-gradient(circle, #3b82f6 0%, #1d4ed8 100%);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.6);
+            animation: pulseElite 3s ease-in-out infinite;
+        }
+        
+        .marker-high {
+            background: radial-gradient(circle, #06b6d4 0%, #0891b2 100%);
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.6);
+            animation: pulseHigh 3s ease-in-out infinite 1s;
+        }
+        
+        .marker-active {
+            background: radial-gradient(circle, #10b981 0%, #059669 100%);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.6);
+            animation: pulseActive 3s ease-in-out infinite 2s;
+        }
+        
+        @keyframes pulseElite {
+            0%, 100% { box-shadow: 0 4px 20px rgba(59, 130, 246, 0.6); }
+            50% { box-shadow: 0 4px 30px rgba(59, 130, 246, 0.9); }
+        }
+        
+        @keyframes pulseHigh {
+            0%, 100% { box-shadow: 0 4px 20px rgba(6, 182, 212, 0.6); }
+            50% { box-shadow: 0 4px 30px rgba(6, 182, 212, 0.9); }
+        }
+        
+        @keyframes pulseActive {
+            0%, 100% { box-shadow: 0 4px 20px rgba(16, 185, 129, 0.6); }
+            50% { box-shadow: 0 4px 30px rgba(16, 185, 129, 0.9); }
+        }
+        
+        .legend {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 320px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: slideInRight 0.5s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .legend-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .legend-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 4px;
+        }
+        
+        .legend-subtitle {
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        
+        .legend-section {
+            margin-bottom: 20px;
+        }
+        
+        .legend-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 12px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .legend-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateX(4px);
+        }
+        
+        .legend-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .legend-color.elite {
+            background: radial-gradient(circle, #3b82f6 0%, #1d4ed8 100%);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+        }
+        
+        .legend-color.high {
+            background: radial-gradient(circle, #06b6d4 0%, #0891b2 100%);
+            box-shadow: 0 2px 8px rgba(6, 182, 212, 0.4);
+        }
+        
+        .legend-color.active {
+            background: radial-gradient(circle, #10b981 0%, #059669 100%);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+        }
+        
+        .legend-text {
+            font-size: 13px;
+            color: #e2e8f0;
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .legend-count {
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 500;
+            background: rgba(59, 130, 246, 0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            min-width: 24px;
+            text-align: center;
+        }
+        
+        .stats {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: slideInUp 0.5s ease-out;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .stats-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+        }
+        
+        .stats-grid {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #3b82f6;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-number:hover {
+            transform: scale(1.1);
+            color: #60a5fa;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        
+        /* Custom popup styles */
+        .leaflet-popup-content-wrapper {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .leaflet-popup-content {
+            margin: 16px 20px;
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .popup-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .popup-programs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+        }
+        
+        .popup-program {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .popup-program.star { background: #3b82f6; }
+        .popup-program.nations { background: #f59e0b; }
+        .popup-program.big { background: #10b981; }
+        .popup-program.excl { background: #ef4444; }
+        
+        .big-scholars-section {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .big-scholars-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #10b981;
+            margin-bottom: 8px;
+        }
+        
+        .year-group {
+            margin-bottom: 8px;
+        }
+        
+        .year-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 4px;
+        }
+        
+        .scholars-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-left: 8px;
+        }
+        
+        .scholar-name {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 500;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .leaflet-popup-tip {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        /* Dark map controls */
+        .leaflet-control-zoom a {
+            background-color: rgba(15, 23, 42, 0.9) !important;
+            color: #e2e8f0 !important;
+            border: 1px solid rgba(59, 130, 246, 0.3) !important;
+        }
+        
+        .leaflet-control-zoom a:hover {
+            background-color: rgba(59, 130, 246, 0.2) !important;
+        }
+        
+        /* Force dark background on all map elements */
+        .leaflet-container {
+            background-color: #25313c !important;
+        }
+        
+        .leaflet-tile-pane {
+            background-color: #25313c !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="map-app">
+        <div id="map"></div>
+        
+        <div class="legend">
+            <div class="legend-header">
+                <div class="legend-title">🌍 Global Talent Map</div>
+                <div class="legend-subtitle">Equal Area • Fair Global Representation</div>
+            </div>
+            
+            <div class="legend-section">
+                <div class="legend-section-title">Program Participation</div>
+                
+                <div class="legend-item">
+                    <div class="legend-color elite"></div>
+                    <div class="legend-text">Elite (3+ programs) 💎</div>
+                    <div class="legend-count" id="elite-count">0</div>
+                </div>
+                
+                <div class="legend-item">
+                    <div class="legend-color high"></div>
+                    <div class="legend-text">High (2 programs) 🔷</div>
+                    <div class="legend-count" id="high-count">0</div>
+                </div>
+                
+                <div class="legend-item">
+                    <div class="legend-color active"></div>
+                    <div class="legend-text">Active (1 program) 🔹</div>
+                    <div class="legend-count" id="active-count">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stats-title">📊 Program Statistics</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="total-countries">0</div>
+                    <div class="stat-label">Countries</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="total-programs">0</div>
+                    <div class="stat-label">Programs</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Program data with real latitude and longitude coordinates
+        const programData = {
+            "United States": { 
+                programs: ["STAR", "NATIONS", "BIG"],
+                lat: 39.8283, lng: -98.5795,
+                bigScholars: {
+                    "2023": ["Sarah Johnson", "Michael Chen", "Emma Rodriguez"],
+                    "2024": ["David Kim", "Aria Patel", "James Wilson", "Sophia Martinez"],
+                    "2025": ["Zoe Thompson", "Ryan Ahmed"]
+                }
+            },
+            "Canada": { 
+                programs: ["STAR", "NATIONS"],
+                lat: 56.1304, lng: -106.3468
+            },
+            "Brazil": { 
+                programs: ["BIG"],
+                lat: -14.2350, lng: -51.9253,
+                bigScholars: {
+                    "2024": ["Ana Silva", "Carlos Santos"],
+                    "2025": ["Gabriela Lima", "Felipe Costa", "Isabella Oliveira"]
+                }
+            },
+            "United Kingdom": { 
+                programs: ["STAR", "EXCL"],
+                lat: 55.3781, lng: -3.4360
+            },
+            "Germany": { 
+                programs: ["STAR", "NATIONS", "EXCL"],
+                lat: 51.1657, lng: 10.4515
+            },
+            "France": { 
+                programs: ["NATIONS"],
+                lat: 46.2276, lng: 2.2137
+            },
+            "India": { 
+                programs: ["BIG", "STAR"],
+                lat: 20.5937, lng: 78.9629,
+                bigScholars: {
+                    "2023": ["Arjun Gupta", "Priya Sharma"],
+                    "2024": ["Rohan Verma", "Ananya Rao", "Vikram Singh"],
+                    "2025": ["Kavya Nair", "Aditya Joshi", "Meera Iyer", "Siddharth Kumar"]
+                }
+            },
+            "China": { 
+                programs: ["BIG"],
+                lat: 35.8617, lng: 104.1954,
+                bigScholars: {
+                    "2024": ["Li Wei", "Zhang Mei", "Wang Jun"],
+                    "2025": ["Chen Xiao", "Liu Yan"]
+                }
+            },
+            "Japan": { 
+                programs: ["STAR", "NATIONS"],
+                lat: 36.2048, lng: 138.2529
+            },
+            "Australia": { 
+                programs: ["STAR", "NATIONS", "BIG"],
+                lat: -25.2744, lng: 133.7751,
+                bigScholars: {
+                    "2023": ["Oliver Campbell", "Charlotte Brown"],
+                    "2024": ["Ethan Davis", "Amelia Taylor", "Noah Anderson"],
+                    "2025": ["Mia White", "Liam Miller"]
+                }
+            },
+            "Nigeria": { 
+                programs: ["BIG"],
+                lat: 9.0820, lng: 8.6753,
+                bigScholars: {
+                    "2024": ["Adaeze Okafor", "Chidi Eze"],
+                    "2025": ["Funmi Adebayo", "Kemi Oluwaseun", "Tolu Babatunde"]
+                }
+            },
+            "South Africa": { 
+                programs: ["NATIONS"],
+                lat: -30.5595, lng: 22.9375
+            },
+            "Kenya": { 
+                programs: ["STAR"],
+                lat: -0.0236, lng: 37.9062
+            },
+            "Italy": { 
+                programs: ["EXCL"],
+                lat: 41.8719, lng: 12.5674
+            },
+            "Russia": { 
+                programs: ["NATIONS", "EXCL"],
+                lat: 61.5240, lng: 105.3188
+            },
+            "Mexico": { 
+                programs: ["BIG"],
+                lat: 23.6345, lng: -102.5528,
+                bigScholars: {
+                    "2023": ["Sofia García", "Diego Hernández"],
+                    "2024": ["Camila López", "Alejandro Martínez", "Valentina Rodríguez"],
+                    "2025": ["Mateo González", "Luna Jiménez"]
+                }
+            },
+            "Argentina": { 
+                programs: ["STAR"],
+                lat: -38.4161, lng: -63.6167
+            },
+            "Colombia": { 
+                programs: ["NATIONS"],
+                lat: 4.5709, lng: -74.2973
+            },
+            "Egypt": { 
+                programs: ["BIG", "STAR"],
+                lat: 26.8206, lng: 30.8025,
+                bigScholars: {
+                    "2024": ["Ahmed Hassan", "Yasmin Ali"],
+                    "2025": ["Omar Mahmoud", "Nour Farid", "Salma Ibrahim"]
+                }
+            },
+            "Kazakhstan": { 
+                programs: ["NATIONS"],
+                lat: 48.0196, lng: 66.9237
+            }
+        };
+        
+        function getParticipationLevel(programs) {
+            if (!programs || programs.length === 0) return 'none';
+            if (programs.length >= 3) return 'elite';
+            if (programs.length === 2) return 'high';
+            return 'active';
+        }
+        
+        function getMarkerLabel(level) {
+            switch(level) {
+                case 'elite': return '💎';
+                case 'high': return '🔷';
+                case 'active': return '🔹';
+                default: return '';
+            }
+        }
+        
+        // Initialize the map with boundaries - using equal-area focused view
+        const map = L.map('map', {
+            center: [0, 0], // Centered on equator for fair global representation
+            zoom: 3, // Start more zoomed in to avoid "data not available" areas
+            minZoom: 3, // Prevent zooming out to where data is missing
+            maxZoom: 6,
+            maxBounds: [[-75, -170], [75, 170]], // Tighter bounds to avoid data gaps
+            maxBoundsViscosity: 1.0,
+            worldCopyJump: false,
+            zoomControl: true,
+            scrollWheelZoom: true,
+            doubleClickZoom: true,
+            dragging: true,
+            touchZoom: true
+        });
+        
+        // Use ESRI World Physical Map which is more equal-area friendly
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: US National Park Service',
+            maxZoom: 6,
+            noWrap: true
+        }).addTo(map);
+        
+        // Add custom CSS to create dark theme overlay
+        const darkStyle = document.createElement('style');
+        darkStyle.textContent = `
+            .leaflet-tile {
+                filter: brightness(0.4) contrast(1.3) hue-rotate(200deg) saturate(0.8) !important;
+            }
+        `;
+        document.head.appendChild(darkStyle);
+        
+        // Initialize statistics
+        let stats = { elite: 0, high: 0, active: 0, totalPrograms: 0 };
+        
+        // Add markers for each country
+        Object.entries(programData).forEach(([country, data]) => {
+            const level = getParticipationLevel(data.programs);
+            const label = getMarkerLabel(level);
+            
+            // Update statistics
+            stats[level]++;
+            stats.totalPrograms += data.programs.length;
+            
+            // Create custom marker
+            const markerElement = document.createElement('div');
+            markerElement.className = `custom-marker marker-${level}`;
+            markerElement.innerHTML = label;
+            
+            // Create custom icon
+            const customIcon = L.divIcon({
+                html: markerElement.outerHTML,
+                className: '',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+            
+            // Create marker
+            const marker = L.marker([data.lat, data.lng], { icon: customIcon }).addTo(map);
+            
+            // Create popup content
+            const hasBIG = data.programs.includes('BIG');
+            const bigScholarsSection = hasBIG && data.bigScholars ? `
+                <div class="big-scholars-section">
+                    <div class="big-scholars-title">🎓 BIG Scholars by Year:</div>
+                    ${Object.entries(data.bigScholars).map(([year, scholars]) => `
+                        <div class="year-group">
+                            <div class="year-label">${year}</div>
+                            <div class="scholars-list">
+                                ${scholars.map(scholar => `<span class="scholar-name">${scholar}</span>`).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : '';
+            
+            const popupContent = `
+                <div class="popup-title">${country}</div>
+                <div>${data.programs.length > 0 ? `Programs (${data.programs.length}):` : 'No program participation'}</div>
+                ${data.programs.length > 0 ? `
+                    <div class="popup-programs">
+                        ${data.programs.map(program => 
+                            `<span class="popup-program ${program.toLowerCase()}">${program}</span>`
+                        ).join('')}
+                    </div>
+                ` : ''}
+                ${bigScholarsSection}
+            `;
+            
+            marker.bindPopup(popupContent);
+            
+            // Show popup on hover
+            marker.on('mouseover', function() {
+                this.openPopup();
+            });
+            
+            // Hide popup when mouse leaves (optional - remove this if you want popups to stay open)
+            marker.on('mouseout', function() {
+                this.closePopup();
+            });
+            
+            // Add click event to open globtalent.org
+            marker.on('click', () => {
+                setTimeout(() => {
+                    window.open('https://globtalent.org', '_blank');
+                }, 100);
+            });
+        });
+        
+        // Update statistics in the UI
+        document.getElementById('elite-count').textContent = stats.elite;
+        document.getElementById('high-count').textContent = stats.high;
+        document.getElementById('active-count').textContent = stats.active;
+        document.getElementById('total-countries').textContent = Object.keys(programData).length;
+        document.getElementById('total-programs').textContent = stats.totalPrograms;
+    </script>
+</body>
+</html>
