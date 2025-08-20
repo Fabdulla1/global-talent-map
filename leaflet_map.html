@@ -422,12 +422,7 @@
         const programData = {
             "United States": { 
                 programs: ["STAR", "NATIONS", "BIG"],
-                lat: 39.8283, lng: -98.5795,
-                bigScholars: {
-                    "2023": ["Sarah Johnson", "Michael Chen", "Emma Rodriguez"],
-                    "2024": ["David Kim", "Aria Patel", "James Wilson", "Sophia Martinez"],
-                    "2025": ["Zoe Thompson", "Ryan Ahmed"]
-                }
+                lat: 39.8283, lng: -98.5795
             },
             "Canada": { 
                 programs: ["STAR", "NATIONS"],
@@ -437,17 +432,25 @@
                 programs: ["BIG"],
                 lat: -14.2350, lng: -51.9253,
                 bigScholars: {
-                    "2024": ["Ana Silva", "Carlos Santos"],
-                    "2025": ["Gabriela Lima", "Felipe Costa", "Isabella Oliveira"]
+                    "2024": ["Bilhana Kochloukova"],
+                    "2025": ["Ruben Mason Carpenter"]
                 }
             },
             "United Kingdom": { 
                 programs: ["STAR", "EXCL"],
-                lat: 55.3781, lng: -3.4360
+                lat: 55.3781, lng: -3.4360,
+                bigScholars: {
+                    "2024": ["Sida Li", "Huyen Ngoc Pham"],
+                    "2025": ["Hanks Chong", "Emily Wong"]
+                }
             },
             "Germany": { 
-                programs: ["STAR", "NATIONS", "EXCL"],
-                lat: 51.1657, lng: 10.4515
+                programs: ["STAR", "NATIONS", "EXCL", "BIG"],
+                lat: 51.1657, lng: 10.4515,
+                bigScholars: {
+                    "2024": ["Vera Lavrova", "Dmitrii Galatenko"],
+                    "2025": ["Tina Ding"]
+                }
             },
             "France": { 
                 programs: ["NATIONS"],
@@ -457,17 +460,15 @@
                 programs: ["BIG", "STAR"],
                 lat: 20.5937, lng: 78.9629,
                 bigScholars: {
-                    "2023": ["Arjun Gupta", "Priya Sharma"],
-                    "2024": ["Rohan Verma", "Ananya Rao", "Vikram Singh"],
-                    "2025": ["Kavya Nair", "Aditya Joshi", "Meera Iyer", "Siddharth Kumar"]
+                    "2024": ["Gunjan Aggarwal", "Ananda Bhaduri", "Rushil Mathur"],
+                    "2025": ["Arjun Gupta", "Vedant Sakre", "Archit Manas"]
                 }
             },
             "China": { 
                 programs: ["BIG"],
                 lat: 35.8617, lng: 104.1954,
                 bigScholars: {
-                    "2024": ["Li Wei", "Zhang Mei", "Wang Jun"],
-                    "2025": ["Chen Xiao", "Liu Yan"]
+                    "2024": ["Clement Hui"]
                 }
             },
             "Japan": { 
@@ -478,25 +479,20 @@
                 programs: ["STAR", "NATIONS", "BIG"],
                 lat: -25.2744, lng: 133.7751,
                 bigScholars: {
-                    "2023": ["Oliver Campbell", "Charlotte Brown"],
-                    "2024": ["Ethan Davis", "Amelia Taylor", "Noah Anderson"],
-                    "2025": ["Mia White", "Liam Miller"]
+                    "2024": ["Arthur Sun"],
+                    "2025": ["Andy Wu"]
                 }
             },
             "Nigeria": { 
-                programs: ["BIG"],
-                lat: 9.0820, lng: 8.6753,
-                bigScholars: {
-                    "2024": ["Adaeze Okafor", "Chidi Eze"],
-                    "2025": ["Funmi Adebayo", "Kemi Oluwaseun", "Tolu Babatunde"]
-                }
+                programs: ["STAR", "NATIONS", "EXCL"],
+                lat: 9.0820, lng: 8.6753
             },
             "South Africa": { 
-                programs: ["NATIONS"],
+                programs: ["STAR", "NATIONS", "BIG"],
                 lat: -30.5595, lng: 22.9375
             },
             "Kenya": { 
-                programs: ["STAR"],
+                programs: ["STAR", "EXCL"],
                 lat: -0.0236, lng: 37.9062
             },
             "Italy": { 
@@ -508,13 +504,8 @@
                 lat: 61.5240, lng: 105.3188
             },
             "Mexico": { 
-                programs: ["BIG"],
-                lat: 23.6345, lng: -102.5528,
-                bigScholars: {
-                    "2023": ["Sofia García", "Diego Hernández"],
-                    "2024": ["Camila López", "Alejandro Martínez", "Valentina Rodríguez"],
-                    "2025": ["Mateo González", "Luna Jiménez"]
-                }
+                programs: ["NATIONS"],
+                lat: 23.6345, lng: -102.5528
             },
             "Argentina": { 
                 programs: ["STAR"],
@@ -525,16 +516,337 @@
                 lat: 4.5709, lng: -74.2973
             },
             "Egypt": { 
-                programs: ["BIG", "STAR"],
-                lat: 26.8206, lng: 30.8025,
-                bigScholars: {
-                    "2024": ["Ahmed Hassan", "Yasmin Ali"],
-                    "2025": ["Omar Mahmoud", "Nour Farid", "Salma Ibrahim"]
-                }
+                programs: ["STAR", "EXCL"],
+                lat: 26.8206, lng: 30.8025
             },
             "Kazakhstan": { 
                 programs: ["NATIONS"],
-                lat: 48.0196, lng: 66.9237
+                lat: 48.0196, lng: 66.9237,
+                bigScholars: {
+                    "2025": ["Margulan Sharel", "Nazar Serazitdinov", "Miron Yurkevich", "Amir Pshenbayev"]
+                }
+            },
+            "Bosnia and Herzegovina": { 
+                programs: ["STAR", "NATIONS", "BIG"],
+                lat: 43.9159, lng: 17.6791,
+                bigScholars: {
+                    "2024": ["Ervin Macic", "Asja Catic", "Ilma Celjo", "Emina Hasanbegovic", "Naida Gavranovic"],
+                    "2025": ["Benjamin Mujkic", "Faruk Ibrahimovic"]
+                }
+            },
+            "Romania": { 
+                programs: ["BIG"],
+                lat: 45.9432, lng: 24.9668,
+                bigScholars: {
+                    "2024": ["Mara Ioana Zaharia", "Alexandru Momoiu", "Andrei Chirita", "Vlad-Titus Spataru"],
+                    "2025": ["Pavel Ciurea"]
+                }
+            },
+            "Serbia": { 
+                programs: ["BIG"],
+                lat: 44.0165, lng: 21.0059,
+                bigScholars: {
+                    "2024": ["Gvozden Lapcevic"],
+                    "2025": ["Janko Popovic", "Novak Despotovic"]
+                }
+            },
+            "Ukraine": { 
+                programs: ["NATIONS", "BIG"],
+                lat: 48.3794, lng: 31.1656,
+                bigScholars: {
+                    "2024": ["Yevheniia Frankevych", "Volodymyr Chub", "Alisa Potomkina", "Ivan Bortnovskyi"],
+                    "2025": ["Daniil Shvaiko", "Oles Hordiichuk", "Kseniia Drozdova", "Ihnat Zharikhin", "Viktor Lukianikhin"]
+                }
+            },
+            "Mongolia": { 
+                programs: ["STAR", "NATIONS", "EXCL", "BIG"],
+                lat: 47.8864, lng: 106.9057,
+                bigScholars: {
+                    "2024": ["Dulguun Gansukh"]
+                }
+            },
+            "El Salvador": { 
+                programs: ["STAR", "BIG"],
+                lat: 13.7942, lng: -88.8965,
+                bigScholars: {
+                    "2024": ["Jose Manuel Cabrera Guardado"]
+                }
+            },
+            "Philippines": { 
+                programs: ["STAR", "NATIONS"],
+                lat: 12.8797, lng: 121.7740
+            },
+            "Georgia": { 
+                programs: ["STAR", "NATIONS"],
+                lat: 42.3154, lng: 43.3569
+            },
+            "Costa Rica": { 
+                programs: ["STAR", "NATIONS", "EXCL", "BIG"],
+                lat: 9.7489, lng: -83.7534,
+                bigScholars: {
+                    "2024": ["Gabriel Najmias"]
+                }
+            },
+            "Bhutan": { 
+                programs: ["STAR", "EXCL"],
+                lat: 27.5142, lng: 90.4336
+            },
+            "Rwanda": { 
+                programs: ["STAR", "NATIONS", "EXCL"],
+                lat: -1.9403, lng: 29.8739
+            },
+            "Bulgaria": { 
+                programs: ["STAR", "NATIONS", "BIG"],
+                lat: 42.7339, lng: 25.4858,
+                bigScholars: {
+                    "2024": ["Victor Lilov"],
+                    "2025": ["Boris Mihov", "Aleksandar Gatev", "Yunxin Hu"]
+                }
+            },
+            "Hungary": { 
+                programs: ["BIG"],
+                lat: 47.1625, lng: 19.5033,
+                bigScholars: {
+                    "2024": ["Laszlo Bence Simon"],
+                    "2025": ["István Ádám Molnár", "Zsófia Keresztély", "Pal Czanik"]
+                }
+            },
+            "Turkey": { 
+                programs: ["BIG"],
+                lat: 38.9637, lng: 35.2433,
+                bigScholars: {
+                    "2024": ["Cagan Ahmet Yanmaz"],
+                    "2025": ["Alp Terliksiz"]
+                }
+            },
+            "Indonesia": { 
+                programs: ["BIG"],
+                lat: -0.7893, lng: 113.9213,
+                bigScholars: {
+                    "2025": ["Kevin Adi Senjaya"]
+                }
+            },
+            "Iran": { 
+                programs: ["BIG"],
+                lat: 32.4279, lng: 53.6880,
+                bigScholars: {
+                    "2025": ["Radin Zahedigolpayegani", "Parsa Saberi"]
+                }
+            },
+            "Belarus": { 
+                programs: ["BIG"],
+                lat: 53.7098, lng: 27.9534,
+                bigScholars: {
+                    "2025": ["Mikhail Raikhman"]
+                }
+            },
+            "Greece": { 
+                programs: ["BIG"],
+                lat: 39.0742, lng: 21.8243,
+                bigScholars: {
+                    "2025": ["Kyriakos Tsourekas", "Sokratis Iliadis"]
+                }
+            },
+            "Poland": { 
+                programs: ["BIG"],
+                lat: 51.9194, lng: 19.1451,
+                bigScholars: {
+                    "2025": ["Magdalena Pudelko", "Pavlo Protsenko"]
+                }
+            },
+            "Finland": { 
+                programs: ["BIG"],
+                lat: 61.9241, lng: 25.7482,
+                bigScholars: {
+                    "2025": ["Aino Aulanko"]
+                }
+            },
+            "Singapore": { 
+                programs: ["BIG"],
+                lat: 1.3521, lng: 103.8198,
+                bigScholars: {
+                    "2025": ["Xing Shen"]
+                }
+            },
+            "Cyprus": { 
+                programs: ["BIG"],
+                lat: 35.1264, lng: 33.4299,
+                bigScholars: {
+                    "2025": ["Filippos Athos"]
+                }
+            },
+            "Armenia": { 
+                programs: ["STAR", "BIG"],
+                lat: 40.0691, lng: 45.0382,
+                bigScholars: {
+                    "2025": ["Aghasi Darbinyan"]
+                }
+            },
+            "North Macedonia": { 
+                programs: ["STAR", "BIG"],
+                lat: 41.6086, lng: 21.7453,
+                bigScholars: {
+                    "2025": ["Aleksij Tasikj"]
+                }
+            },
+            "Netherlands": { 
+                programs: ["BIG"],
+                lat: 52.1326, lng: 5.2913,
+                bigScholars: {
+                    "2025": ["Casper Heimel"]
+                }
+            },
+            "Uzbekistan": { 
+                programs: ["STAR", "EXCL", "BIG"],
+                lat: 41.3775, lng: 64.5853,
+                bigScholars: {
+                    "2025": ["Javohir Sadullayev"]
+                }
+            },
+            // Additional countries from input_data.xlsx
+            "Albania": { 
+                programs: ["STAR"],
+                lat: 41.1533, lng: 20.1683
+            },
+            "Algeria": { 
+                programs: ["STAR", "EXCL"],
+                lat: 28.0339, lng: 1.6596
+            },
+            "Bangladesh": { 
+                programs: ["STAR"],
+                lat: 23.6850, lng: 90.3563
+            },
+            "Bolivia": { 
+                programs: ["STAR"],
+                lat: -16.2902, lng: -63.5887
+            },
+            "Botswana": { 
+                programs: ["STAR", "NATIONS"],
+                lat: -22.3285, lng: 24.6849
+            },
+            "Cameroon": { 
+                programs: ["STAR"],
+                lat: 7.3697, lng: 12.3547
+            },
+            "Chile": { 
+                programs: ["NATIONS"],
+                lat: -35.6751, lng: -71.5430
+            },
+            "Cuba": { 
+                programs: ["STAR"],
+                lat: 21.5218, lng: -77.7812
+            },
+            "Czech Republic": { 
+                programs: ["STAR"],
+                lat: 49.8175, lng: 15.4730
+            },
+            "Democratic Republic of the Congo": { 
+                programs: ["EXCL"],
+                lat: -4.0383, lng: 21.7587
+            },
+            "Dominican Republic": { 
+                programs: ["STAR"],
+                lat: 18.7357, lng: -70.1627
+            },
+            "Ethiopia": { 
+                programs: ["STAR", "NATIONS"],
+                lat: 9.1450, lng: 40.4897
+            },
+            "Guatemala": { 
+                programs: ["STAR", "EXCL"],
+                lat: 15.7835, lng: -90.2308
+            },
+            "Ivory Coast": { 
+                programs: ["STAR"],
+                lat: 7.5400, lng: -5.5471
+            },
+            "Jordan": { 
+                programs: ["STAR", "NATIONS"],
+                lat: 30.5852, lng: 36.2384
+            },
+            "Kyrgyzstan": { 
+                programs: ["STAR", "NATIONS"],
+                lat: 41.2044, lng: 74.7661
+            },
+            "Latvia": { 
+                programs: ["STAR"],
+                lat: 56.8796, lng: 24.6032
+            },
+            "Lesotho": { 
+                programs: ["STAR"],
+                lat: -29.6100, lng: 28.2336
+            },
+            "Lithuania": { 
+                programs: ["STAR", "NATIONS"],
+                lat: 55.1694, lng: 23.8813
+            },
+            "Malaysia": { 
+                programs: ["STAR", "NATIONS"],
+                lat: 4.2105, lng: 101.9758
+            },
+            "Mauritania": { 
+                programs: ["STAR", "NATIONS", "EXCL"],
+                lat: 21.0079, lng: -10.9408
+            },
+            "Montenegro": { 
+                programs: ["STAR"],
+                lat: 42.7087, lng: 19.3744
+            },
+            "Morocco": { 
+                programs: ["STAR", "NATIONS", "EXCL"],
+                lat: 31.7917, lng: -7.0926
+            },
+            "Namibia": { 
+                programs: ["NATIONS"],
+                lat: -22.9576, lng: 18.4904
+            },
+            "Nepal": { 
+                programs: ["STAR"],
+                lat: 28.3949, lng: 84.1240
+            },
+            "Nicaragua": { 
+                programs: ["STAR", "EXCL"],
+                lat: 12.2651, lng: -85.2072
+            },
+            "Pakistan": { 
+                programs: ["STAR", "NATIONS"],
+                lat: 30.3753, lng: 69.3451
+            },
+            "Palestine": { 
+                programs: ["STAR"],
+                lat: 31.9522, lng: 35.2332
+            },
+            "Peru": { 
+                programs: ["STAR"],
+                lat: -9.1900, lng: -75.0152
+            },
+            "South Sudan": { 
+                programs: ["STAR"],
+                lat: 6.8770, lng: 31.3070
+            },
+            "Tanzania": { 
+                programs: ["EXCL"],
+                lat: -6.3690, lng: 34.8888
+            },
+            "Tunisia": { 
+                programs: ["STAR"],
+                lat: 33.8869, lng: 9.5375
+            },
+            "Uganda": { 
+                programs: ["STAR"],
+                lat: 1.3733, lng: 32.2903
+            },
+            "Zimbabwe": { 
+                programs: ["STAR"],
+                lat: -19.0154, lng: 29.1549
+            },
+            "American Samoa": { 
+                programs: ["STAR"],
+                lat: -14.3064, lng: -170.6958
+            },
+            "Eswatini": { 
+                programs: ["STAR"],
+                lat: -26.5225, lng: 31.4659
             }
         };
         
@@ -655,11 +967,33 @@
                 this.closePopup();
             });
             
-            // Add click event to open globtalent.org
-            marker.on('click', () => {
-                setTimeout(() => {
-                    window.open('https://globtalent.org', '_blank');
-                }, 100);
+            // Add click event to open country-specific pages when available
+            const countryLinks = {
+                'Philippines': 'https://global-talent-fund.webflow.io/country-collection/philippines',
+                'Georgia': 'https://global-talent-fund.webflow.io/country-collection/georgia',
+                'Mongolia': 'https://global-talent-fund.webflow.io/country-collection/mongolia',
+                'Bhutan': 'https://global-talent-fund.webflow.io/country-collection/bhutan',
+                'Rwanda': 'https://global-talent-fund.webflow.io/country-collection/rwanda',
+                // Latin American countries
+                'Mexico': 'https://global-talent-fund.webflow.io/country-collection/latin-america',
+                'Brazil': 'https://global-talent-fund.webflow.io/country-collection/latin-america',
+                'Argentina': 'https://global-talent-fund.webflow.io/country-collection/latin-america',
+                'Colombia': 'https://global-talent-fund.webflow.io/country-collection/latin-america',
+                'Bolivia': 'https://global-talent-fund.webflow.io/country-collection/latin-america',
+                'Peru': 'https://global-talent-fund.webflow.io/country-collection/latin-america',
+                'Chile': 'https://global-talent-fund.webflow.io/country-collection/latin-america',
+                'Costa Rica': 'https://global-talent-fund.webflow.io/country-collection/latin-america',
+                'El Salvador': 'https://global-talent-fund.webflow.io/country-collection/latin-america',
+                'Guatemala': 'https://global-talent-fund.webflow.io/country-collection/latin-america',
+                'Nicaragua': 'https://global-talent-fund.webflow.io/country-collection/latin-america',
+                'Dominican Republic': 'https://global-talent-fund.webflow.io/country-collection/latin-america'
+            };
+
+            marker.on('click', function() {
+                const countryName = country; // from outer scope
+                const url = countryLinks[countryName] || 'https://globtalent.org';
+                // small delay to allow click animation / popup events
+                setTimeout(() => window.open(url, '_blank'), 100);
             });
         });
         
