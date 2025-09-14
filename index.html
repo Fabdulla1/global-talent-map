@@ -1,74 +1,693 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Talent Map - Interactive World Visualization</title>
-    <style>
-        body {
-            font-family: 'Inter', system-ui, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #1d333e, #2B74B3);
-            color: white;
-            text-align: center;
-        }
-        .container {
-            max-width: 600px;
-            padding: 2rem;
-        }
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            opacity: 0;
-            animation: fadeIn 1s ease-in forwards;
-        }
-        p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0;
-            animation: fadeIn 1s ease-in 0.5s forwards;
-        }
-        .loading {
-            opacity: 0;
-            animation: fadeIn 1s ease-in 1s forwards;
-        }
-        .spinner {
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top: 3px solid white;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Global Talent Map — Winkel Tripel (OpenLayers)</title>
+  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAABILAAASCwAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A">
+
+  <!-- proj4 (keep this above OpenLayers) -->
+  <script src="https://cdn.jsdelivr.net/npm/proj4@2.9.0/dist/proj4.js"></script>
+
+  <!-- OpenLayers hosted build (official) -->
+  <script src="https://cdn.jsdelivr.net/npm/ol@v10.6.1/dist/ol.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.6.1/ol.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root{
+      --cream-bg:#F8F6F1; --cream-light:#FDFBF7;
+      --navy-primary:#1d333e; --navy-secondary:#2C4A5A; --light-navy:#4A6B7A;
+      --accent-blue:#2B74B3; --accent-blue-light:#6BA7D6;
+      --warm-white:#FFFFFF; --soft-gray:#F8F9FA;
+      --border-light:rgba(29,51,62,.06);
+      --shadow-soft:rgba(29,51,62,.08);
+      --shadow-medium:rgba(29,51,62,.12);
+      --shadow-strong:rgba(29,51,62,.16);
+    }
+
+    html,body{margin:0;padding:0;height:100%;width:100%;overflow:hidden}
+    *{box-sizing:border-box}
+    body{font-family:'Inter',system-ui,sans-serif;background:var(--cream-bg);color:var(--navy-primary)}
+
+    .map-app{position:relative;width:100vw;height:100vh;background:var(--cream-bg)}
+    #map{position:absolute;inset:0;background:var(--cream-bg);z-index:1}
+
+    /* Legend / Stats (theme) */
+    .legend{position:fixed;top:65px;right:20px;width:320px;max-width:90vw;background:var(--warm-white);
+      border:1px solid var(--border-light);border-radius:16px;padding:24px;
+      box-shadow:0 8px 30px var(--shadow-medium);backdrop-filter:saturate(140%) blur(6px);
+      z-index:1999;transition:.3s cubic-bezier(.4,0,.2,1);transform:translateX(100%);opacity:0;visibility:hidden}
+    .legend.show{transform:translateX(0);opacity:1;visibility:visible}
+    .legend-toggle{display:block!important;position:fixed;top:20px;right:20px;background:var(--navy-primary);
+      color:var(--warm-white);border:none;border-radius:12px;padding:12px 16px;cursor:pointer;font-weight:600;font-size:14px;
+      box-shadow:0 4px 16px var(--shadow-medium);z-index:2000;transition:.3s;min-width:100px;text-align:center}
+    .legend-toggle:hover{background:var(--navy-secondary);transform:translateY(-2px);box-shadow:0 6px 20px var(--shadow-strong)}
+    .legend-toggle.active{background:var(--accent-blue)}
+    .legend-header{text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--border-light)}
+    .legend-title{font-size:18px;font-weight:700;color:var(--navy-primary);margin-bottom:4px;letter-spacing:-.025em}
+    .legend-subtitle{font-size:13px;color:var(--light-navy);font-weight:500;letter-spacing:.25px}
+    .legend-section{margin-bottom:16px}
+    .legend-section-title{font-size:13px;font-weight:600;color:var(--navy-secondary);margin-bottom:10px}
+    .legend-item{display:flex;align-items:center;margin-bottom:8px;padding:8px 12px;border-radius:10px;transition:.2s;gap:12px;cursor:pointer}
+    .legend-item:hover{background:var(--soft-gray);transform:translateX(4px)}
+    .legend-color{width:24px;height:24px;border-radius:50%;border:2px solid var(--warm-white);box-shadow:0 2px 8px var(--shadow-soft)}
+    .legend-color.elite{background:linear-gradient(135deg,var(--navy-primary),var(--navy-secondary))}
+    .legend-color.high{background:linear-gradient(135deg,var(--accent-blue),var(--navy-secondary))}
+    .legend-color.active{background:linear-gradient(135deg,var(--accent-blue-light),var(--accent-blue))}
+    .legend-text{flex:1;font-size:14px;font-weight:500;color:var(--navy-primary)}
+    .legend-count{color:var(--light-navy);font-size:11px;font-weight:600;background:var(--soft-gray);padding:2px 6px;border-radius:10px;min-width:20px;text-align:center}
+
+    .stats{position:fixed;bottom:24px;left:24px;background:var(--warm-white);border:1px solid var(--border-light);
+      border-radius:16px;padding:16px 20px;box-shadow:0 8px 30px var(--shadow-medium);backdrop-filter:saturate(140%) blur(6px);z-index:1000}
+    .stats-title{font-size:13px;font-weight:600;color:var(--navy-secondary);margin-bottom:6px}
+    .stats-grid{display:flex;gap:16px}.stat-item{text-align:center}
+    .stat-number{font-size:20px;font-weight:700;color:var(--navy-primary);transition:.3s}
+    .stat-number:hover{transform:scale(1.05);color:var(--accent-blue)}
+    .stat-label{font-size:10px;color:var(--light-navy);font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+
+    /* OpenLayers popup styled to theme */
+    .ol-popup {
+      position: absolute;
+      background: var(--warm-white);
+      border: 1px solid rgba(30,45,58,0.06);
+      border-radius: 12px;
+      box-shadow: 0 12px 36px rgba(30, 45, 58, 0.16);
+      padding: 14px 16px;
+      min-width: 220px;
+      z-index: 10000;
+      transform: translate(-50%, -100%);
+      color: var(--navy-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+    }
+    .popup-title{font-size:16px;font-weight:800;margin-bottom:8px}
+    .popup-programs{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
+    .popup-program{padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;color:var(--warm-white)}
+    .popup-program.star{background:var(--navy-primary)} .popup-program.nations{background:var(--light-navy)}
+    .popup-program.big{background:var(--accent-blue)} .popup-program.excl{background:var(--navy-secondary)}
+    .big-scholars-section{margin-top:10px;padding-top:8px;border-top:1px solid var(--border-light)}
+    .big-scholars-title{font-size:12px;font-weight:600;color:var(--accent-blue);margin-bottom:6px}
+    .year-group{margin-bottom:6px}.year-label{font-size:11px;font-weight:700;color:var(--navy-secondary);margin-bottom:3px}
+    .scholars-list{display:flex;flex-wrap:wrap;gap:3px;margin-left:6px}
+    .scholar-name{background:rgba(59,130,246,.1);color:var(--accent-blue);padding:1px 5px;border-radius:6px;font-size:9px;
+      font-weight:500;border:1px solid rgba(59,130,246,.2)}
+
+    /* Hover tooltip */
+    .hover-tooltip {
+      position: absolute;
+      background: var(--warm-white);
+      color: var(--navy-primary);
+      border: 1px solid rgba(30,45,58,0.06);
+      border-radius: 12px;
+      box-shadow: 0 12px 36px rgba(30, 45, 58, 0.16);
+      padding: 14px 16px;
+      min-width: 220px;
+      pointer-events: none;
+      z-index: 10001;
+      transform: translate(-50%, -100%);
+      margin-top: -8px;
+      white-space: nowrap;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+    }
+    .hover-tooltip .popup-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .hover-tooltip .popup-programs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      margin-top: 6px;
+    }
+    .hover-tooltip .popup-program {
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--warm-white);
+    }
+    .hover-tooltip .popup-program.star { background: var(--navy-primary); }
+    .hover-tooltip .popup-program.nations { background: var(--light-navy); }
+    .hover-tooltip .popup-program.big { background: var(--accent-blue); }
+    .hover-tooltip .popup-program.excl { background: var(--navy-secondary); }
+    .hover-tooltip .big-scholars-section {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-light);
+      white-space: normal;
+    }
+    .hover-tooltip .big-scholars-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-blue);
+      margin-bottom: 6px;
+    }
+    .hover-tooltip .year-group {
+      margin-bottom: 6px;
+    }
+    .hover-tooltip .year-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--navy-secondary);
+      margin-bottom: 3px;
+    }
+    .hover-tooltip .scholars-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      margin-left: 6px;
+    }
+    .hover-tooltip .scholar-name {
+      background: rgba(59,130,246,.1);
+      color: var(--accent-blue);
+      padding: 1px 5px;
+      border-radius: 6px;
+      font-size: 9px;
+      font-weight: 500;
+      border: 1px solid rgba(59,130,246,.2);
+    }
+
+    /* Mobile tweaks */
+    @media (max-width:768px){
+      .legend{top:60px;right:10px;left:10px;width:auto;max-height:70vh;overflow:auto}
+      .legend.show{transform:translateY(0)}
+      .legend-toggle{top:10px;right:10px;padding:10px 14px;font-size:13px}
+      .stats{bottom:10px;left:10px;padding:10px 14px}
+      .stat-number{font-size:18px}
+    }
+    @media (max-width:480px){
+      .legend{width:90vw;top:5px;right:5px;padding:18px}
+      .legend-toggle{font-size:12px;padding:10px 14px}
+      .stats{bottom:5px;left:5px;font-size:11px;padding:8px 10px}
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🌍 Global Talent Map</h1>
-        <p>Loading interactive world map...</p>
-        <div class="loading">
-            <div class="spinner"></div>
-            <p>Redirecting to map application...</p>
-        </div>
+  <div class="map-app">
+    <div id="map"></div>
+
+    <!-- Popup container for OpenLayers -->
+    <div id="popup" class="ol-popup" style="display:none;">
+      <div id="popup-content"></div>
     </div>
 
-    <script>
-        // Redirect to the main application after a brief loading screen
-        setTimeout(function() {
-            window.location.href = './leaflet_map.html';
-        }, 2000);
-    </script>
+    <!-- Legend toggle button -->
+    <button class="legend-toggle" onclick="toggleLegend()" id="legendToggle">📊 Legend</button>
+
+    <div class="legend" id="legend">
+      <div class="legend-header">
+        <div class="legend-title">🌍 Global Talent Map</div>
+        <div class="legend-subtitle">Winkel Tripel • Fair-size compromise</div>
+      </div>
+
+      <div class="legend-section">
+        <div class="legend-section-title">Program Participation</div>
+
+        <div class="legend-item">
+          <div class="legend-color elite"></div>
+          <div class="legend-text">3+ programs 💎</div>
+          <div class="legend-count" id="elite-count">0</div>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-color high"></div>
+          <div class="legend-text">2 programs 🔷</div>
+          <div class="legend-count" id="high-count">0</div>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-color active"></div>
+          <div class="legend-text">1 program 🔹</div>
+          <div class="legend-count" id="active-count">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stats-title">📊 Program Statistics</div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number" id="total-countries">0</div>
+          <div class="stat-label">Countries</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="total-programs">0</div>
+          <div class="stat-label">Programs</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ---------- DATA: keep exactly as-is from your app ---------- */
+    const programData = {
+      "United States":{programs:["STAR","NATIONS","BIG"],lat:39.8283,lng:-98.5795},
+      "Canada":{programs:["STAR","NATIONS"],lat:56.1304,lng:-106.3468},
+      "Brazil":{programs:["BIG"],lat:-14.2350,lng:-51.9253,bigScholars:{"2024":["Bilhana Kochloukova"],"2025":["Ruben Mason Carpenter"]}},
+      "United Kingdom":{programs:["STAR","EXCL"],lat:55.3781,lng:-3.4360,bigScholars:{"2024":["Sida Li","Huyen Ngoc Pham"],"2025":["Hanks Chong","Emily Wong"]}},
+      "Germany":{programs:["STAR","NATIONS","EXCL","BIG"],lat:51.1657,lng:10.4515,bigScholars:{"2024":["Vera Lavrova","Dmitrii Galatenko"],"2025":["Tina Ding"]}},
+      "France":{programs:["NATIONS"],lat:46.2276,lng:2.2137},
+      "India":{programs:["BIG","STAR"],lat:20.5937,lng:78.9629,bigScholars:{"2024":["Gunjan Aggarwal","Ananda Bhaduri","Rushil Mathur"],"2025":["Arjun Gupta","Vedant Sakre","Archit Manas"]}},
+      "China":{programs:["BIG"],lat:35.8617,lng:104.1954,bigScholars:{"2024":["Clement Hui"]}},
+      "Japan":{programs:["STAR","NATIONS"],lat:36.2048,lng:138.2529},
+      "Australia":{programs:["STAR","NATIONS","BIG"],lat:-25.2744,lng:133.7751,bigScholars:{"2024":["Arthur Sun"],"2025":["Andy Wu"]}},
+      "Nigeria":{programs:["STAR","NATIONS","EXCL"],lat:9.0820,lng:8.6753},
+      "South Africa":{programs:["STAR","NATIONS","BIG"],lat:-30.5595,lng:22.9375},
+      "Kenya":{programs:["STAR","EXCL"],lat:-0.0236,lng:37.9062},
+      "Italy":{programs:["EXCL"],lat:41.8719,lng:12.5674},
+      "Russia":{programs:["NATIONS","EXCL"],lat:61.5240,lng:105.3188},
+      "Mexico":{programs:["NATIONS"],lat:23.6345,lng:-102.5528},
+      "Argentina":{programs:["STAR"],lat:-38.4161,lng:-63.6167},
+      "Colombia":{programs:["NATIONS"],lat:4.5709,lng:-74.2973},
+      "Egypt":{programs:["STAR","EXCL"],lat:26.8206,lng:30.8025},
+      "Kazakhstan":{programs:["NATIONS"],lat:48.0196,lng:66.9237,bigScholars:{"2025":["Margulan Sharel","Nazar Serazitdinov","Miron Yurkevich","Amir Pshenbayev"]}},
+      "Bosnia and Herzegovina":{programs:["STAR","NATIONS","BIG"],lat:43.9159,lng:17.6791,bigScholars:{"2024":["Ervin Macic","Asja Catic","Ilma Celjo","Emina Hasanbegovic","Naida Gavranovic"],"2025":["Benjamin Mujkic","Faruk Ibrahimovic"]}},
+      "Romania":{programs:["BIG"],lat:45.9432,lng:24.9668,bigScholars:{"2024":["Mara Ioana Zaharia","Alexandru Momoiu","Andrei Chirita","Vlad-Titus Spataru"],"2025":["Pavel Ciurea"]}},
+      "Serbia":{programs:["BIG"],lat:44.0165,lng:21.0059,bigScholars:{"2024":["Gvozden Lapcevic"],"2025":["Janko Popovic","Novak Despotovic"]}},
+      "Ukraine":{programs:["NATIONS","BIG"],lat:48.3794,lng:31.1656,bigScholars:{"2024":["Yevheniia Frankevych","Volodymyr Chub","Alisa Potomkina","Ivan Bortnovskyi"],"2025":["Daniil Shvaiko","Oles Hordiichuk","Kseniia Drozdova","Ihnat Zharikhin","Viktor Lukianikhin"]}},
+      "Mongolia":{programs:["STAR","NATIONS","EXCL","BIG"],lat:47.8864,lng:106.9057,bigScholars:{"2024":["Dulguun Gansukh"]}},
+      "El Salvador":{programs:["STAR","BIG"],lat:13.7942,lng:-88.8965,bigScholars:{"2024":["Jose Manuel Cabrera Guardado"]}},
+      "Philippines":{programs:["STAR","NATIONS"],lat:12.8797,lng:121.7740},
+      "Georgia":{programs:["STAR","NATIONS"],lat:42.3154,lng:43.3569},
+      "Costa Rica":{programs:["STAR","NATIONS","EXCL","BIG"],lat:9.7489,lng:-83.7534,bigScholars:{"2024":["Gabriel Najmias"]}},
+      "Bhutan":{programs:["STAR","EXCL"],lat:27.5142,lng:90.4336},
+      "Rwanda":{programs:["STAR","NATIONS","EXCL"],lat:-1.9403,lng:29.8739},
+      "Bulgaria":{programs:["STAR","NATIONS","BIG"],lat:42.7339,lng:25.4858,bigScholars:{"2024":["Victor Lilov"],"2025":["Boris Mihov","Aleksandar Gatev","Yunxin Hu"]}},
+      "Hungary":{programs:["BIG"],lat:47.1625,lng:19.5033,bigScholars:{"2024":["Laszlo Bence Simon"],"2025":["István Ádám Molnár","Zsófia Keresztély","Pal Czanik"]}},
+      "Turkey":{programs:["BIG"],lat:38.9637,lng:35.2433,bigScholars:{"2024":["Cagan Ahmet Yanmaz"],"2025":["Alp Terliksiz"]}},
+      "Indonesia":{programs:["BIG"],lat:-0.7893,lng:113.9213,bigScholars:{"2025":["Kevin Adi Senjaya"]}},
+      "Iran":{programs:["BIG"],lat:32.4279,lng:53.6880,bigScholars:{"2025":["Radin Zahedigolpayegani","Parsa Saberi"]}},
+      "Belarus":{programs:["BIG"],lat:53.7098,lng:27.9534,bigScholars:{"2025":["Mikhail Raikhman"]}},
+      "Greece":{programs:["BIG"],lat:39.0742,lng:21.8243,bigScholars:{"2025":["Kyriakos Tsourekas","Sokratis Iliadis"]}},
+      "Poland":{programs:["BIG"],lat:51.9194,lng:19.1451,bigScholars:{"2025":["Magdalena Pudelko","Pavlo Protsenko"]}},
+      "Finland":{programs:["BIG"],lat:61.9241,lng:25.7482,bigScholars:{"2025":["Aino Aulanko"]}},
+      "Singapore":{programs:["BIG"],lat:1.3521,lng:103.8198,bigScholars:{"2025":["Xing Shen"]}},
+      "Cyprus":{programs:["BIG"],lat:35.1264,lng:33.4299,bigScholars:{"2025":["Filippos Athos"]}},
+      "Armenia":{programs:["STAR","BIG"],lat:40.0691,lng:45.0382,bigScholars:{"2025":["Aghasi Darbinyan"]}},
+      "North Macedonia":{programs:["STAR","BIG"],lat:41.6086,lng:21.7453,bigScholars:{"2025":["Aleksij Tasikj"]}},
+      "Netherlands":{programs:["BIG"],lat:52.1326,lng:5.2913,bigScholars:{"2025":["Casper Heimel"]}},
+      "Uzbekistan":{programs:["STAR","EXCL","BIG"],lat:41.3775,lng:64.5853,bigScholars:{"2025":["Javohir Sadullayev"]}},
+      "Albania":{programs:["STAR"],lat:41.1533,lng:20.1683},
+      "Algeria":{programs:["STAR","EXCL"],lat:28.0339,lng:1.6596},
+      "Bangladesh":{programs:["STAR"],lat:23.6850,lng:90.3563},
+      "Bolivia":{programs:["STAR"],lat:-16.2902,lng:-63.5887},
+      "Botswana":{programs:["STAR","NATIONS"],lat:-22.3285,lng:24.6849},
+      "Cameroon":{programs:["STAR"],lat:7.3697,lng:12.3547},
+      "Chile":{programs:["NATIONS"],lat:-35.6751,lng:-71.5430},
+      "Cuba":{programs:["STAR"],lat:21.5218,lng:-77.7812},
+      "Czech Republic":{programs:["STAR"],lat:49.8175,lng:15.4730},
+      "Democratic Republic of the Congo":{programs:["EXCL"],lat:-4.0383,lng:21.7587},
+      "Dominican Republic":{programs:["STAR"],lat:18.7357,lng:-70.1627},
+      "Ethiopia":{programs:["STAR","NATIONS"],lat:9.1450,lng:40.4897},
+      "Guatemala":{programs:["STAR","EXCL"],lat:15.7835,lng:-90.2308},
+      "Ivory Coast":{programs:["STAR"],lat:7.5400,lng:-5.5471},
+      "Jordan":{programs:["STAR","NATIONS"],lat:30.5852,lng:36.2384},
+      "Kyrgyzstan":{programs:["STAR","NATIONS"],lat:41.2044,lng:74.7661},
+      "Latvia":{programs:["STAR"],lat:56.8796,lng:24.6032},
+      "Lesotho":{programs:["STAR"],lat:-29.6100,lng:28.2336},
+      "Lithuania":{programs:["STAR","NATIONS"],lat:55.1694,lng:23.8813},
+      "Malaysia":{programs:["STAR","NATIONS"],lat:4.2105,lng:101.9758},
+      "Mauritania":{programs:["STAR","NATIONS","EXCL"],lat:21.0079,lng:-10.9408},
+      "Montenegro":{programs:["STAR"],lat:42.7087,lng:19.3744},
+      "Morocco":{programs:["STAR","NATIONS","EXCL"],lat:31.7917,lng:-7.0926},
+      "Namibia":{programs:["NATIONS"],lat:-22.9576,lng:18.4904},
+      "Nepal":{programs:["STAR"],lat:28.3949,lng:84.1240},
+      "Nicaragua":{programs:["STAR","EXCL"],lat:12.2651,lng:-85.2072},
+      "Pakistan":{programs:["STAR","NATIONS"],lat:30.3753,lng:69.3451},
+      "Palestine":{programs:["STAR"],lat:31.9522,lng:35.2332},
+      "Peru":{programs:["STAR"],lat:-9.1900,lng:-75.0152},
+      "South Sudan":{programs:["STAR"],lat:6.8770,lng:31.3070},
+      "Tanzania":{programs:["EXCL"],lat:-6.3690,lng:34.8888},
+      "Tunisia":{programs:["STAR"],lat:33.8869,lng:9.5375},
+      "Uganda":{programs:["STAR"],lat:1.3733,lng:32.2903},
+      "Zimbabwe":{programs:["STAR"],lat:-19.0154,lng:29.1549},
+      "American Samoa":{programs:["STAR"],lat:-14.3064,lng:-170.6958},
+      "Eswatini":{programs:["STAR"],lat:-26.5225,lng:31.4659}
+    };
+
+    // Country website mappings for click navigation
+    const countryWebsites = {
+      "United States": "https://www.usa.gov",
+      "Canada": "https://www.canada.ca",
+      "United Kingdom": "https://www.gov.uk",
+      "Australia": "https://www.australia.gov.au",
+      "India": "https://www.india.gov.in",
+      "Romania": "https://www.gov.ro",
+      "China": "https://www.gov.cn",
+      "South Korea": "https://www.korea.kr",
+      "Russia": "https://www.gov.ru",
+      "Ukraine": "https://www.kmu.gov.ua",
+      "Germany": "https://www.deutschland.de",
+      "France": "https://www.service-public.fr",
+      "Italy": "https://www.governo.it",
+      "Spain": "https://www.lamoncloa.gob.es",
+      "Japan": "https://www.kantei.go.jp",
+      // Latin American countries - all point to latin-america collection
+      "Brazil": "https://global-talent-fund.webflow.io/country-collection/latin-america",
+      "Mexico": "https://global-talent-fund.webflow.io/country-collection/latin-america",
+      "Argentina": "https://global-talent-fund.webflow.io/country-collection/latin-america",
+      "Colombia": "https://global-talent-fund.webflow.io/country-collection/latin-america",
+      "Chile": "https://global-talent-fund.webflow.io/country-collection/latin-america",
+      "Peru": "https://global-talent-fund.webflow.io/country-collection/latin-america",
+      "Bolivia": "https://global-talent-fund.webflow.io/country-collection/latin-america",
+      "El Salvador": "https://global-talent-fund.webflow.io/country-collection/latin-america",
+      "Costa Rica": "https://global-talent-fund.webflow.io/country-collection/costa-rica",
+      "Guatemala": "https://global-talent-fund.webflow.io/country-collection/latin-america",
+      "Nicaragua": "https://global-talent-fund.webflow.io/country-collection/latin-america",
+      "Cuba": "https://global-talent-fund.webflow.io/country-collection/latin-america",
+      "Dominican Republic": "https://global-talent-fund.webflow.io/country-collection/latin-america",
+      // Specific country collections
+      "Philippines": "https://global-talent-fund.webflow.io/country-collection/philippines",
+      "Georgia": "https://global-talent-fund.webflow.io/country-collection/georgia",
+      "Mongolia": "https://global-talent-fund.webflow.io/country-collection/mongolia",
+      "Bhutan": "https://global-talent-fund.webflow.io/country-collection/bhutan",
+      "Rwanda": "https://global-talent-fund.webflow.io/country-collection/rwanda",
+      // Other countries keep their original links
+      "Taiwan": "https://www.gov.tw",
+      "Thailand": "https://www.thaigov.go.th",
+      "Vietnam": "https://www.chinhphu.vn",
+      "Israel": "https://www.gov.il",
+      "Serbia": "https://www.gov.rs",
+      "Croatia": "https://www.gov.hr",
+      "Kazakhstan": "https://www.gov.kz",
+      "Slovenia": "https://www.gov.si",
+      "Bosnia and Herzegovina": "https://www.gov.ba",
+      "Saudi Arabia": "https://www.spa.gov.sa",
+      "Moldova": "https://www.gov.md",
+      "Azerbaijan": "https://www.azerbaijan.az",
+      "Slovakia": "https://www.gov.sk",
+      "Latvia": "https://www.mk.gov.lv",
+      "Estonia": "https://www.riik.ee",
+      "Iceland": "https://www.government.is",
+      "Ireland": "https://www.gov.ie",
+      "Norway": "https://www.regjeringen.no",
+      "Sweden": "https://www.government.se",
+      "Denmark": "https://www.stm.dk",
+      "Belgium": "https://www.belgium.be",
+      "Luxembourg": "https://www.gouvernement.lu",
+      "Switzerland": "https://www.admin.ch",
+      "Austria": "https://www.bundeskanzleramt.gv.at",
+      "Portugal": "https://www.portugal.gov.pt",
+      "Bulgaria": "https://www.government.bg",
+      "Hungary": "https://www.kormany.hu",
+      "Turkey": "https://www.turkiye.gov.tr",
+      "Indonesia": "https://www.indonesia.go.id",
+      "Iran": "https://www.president.ir",
+      "Belarus": "https://www.gov.by",
+      "Greece": "https://www.gov.gr",
+      "Poland": "https://www.gov.pl",
+      "Finland": "https://www.valtioneuvosto.fi",
+      "Singapore": "https://www.gov.sg",
+      "Cyprus": "https://www.gov.cy",
+      "Armenia": "https://www.gov.am",
+      "North Macedonia": "https://www.vlada.mk",
+      "Netherlands": "https://www.government.nl",
+      "Uzbekistan": "https://www.gov.uz",
+      "Albania": "https://www.kryeministria.al",
+      "Algeria": "https://www.joradp.dz",
+      "Bangladesh": "https://www.bangladesh.gov.bd",
+      "Botswana": "https://www.gov.bw",
+      "Cameroon": "https://www.spm.gov.cm",
+      "Czech Republic": "https://www.vlada.cz",
+      "Democratic Republic of the Congo": "https://www.presidence.cd",
+      "Ethiopia": "https://www.ethiopia.gov.et",
+      "Ivory Coast": "https://www.gouv.ci",
+      "Jordan": "https://www.pm.gov.jo",
+      "Kyrgyzstan": "https://www.gov.kg",
+      "Lesotho": "https://www.gov.ls",
+      "Lithuania": "https://www.lrv.lt",
+      "Malaysia": "https://www.malaysia.gov.my",
+      "Mauritania": "https://www.mauritania.mr",
+      "Montenegro": "https://www.gov.me",
+      "Morocco": "https://www.maroc.ma",
+      "Namibia": "https://www.gov.na",
+      "Nepal": "https://www.nepal.gov.np",
+      "Pakistan": "https://www.pakistan.gov.pk",
+      "Palestine": "https://www.palestinecabinet.gov.ps",
+      "South Sudan": "https://www.goss.org",
+      "Tanzania": "https://www.tanzania.go.tz",
+      "Tunisia": "https://www.tunisie.gov.tn",
+      "Uganda": "https://www.gov.ug",
+      "Zimbabwe": "https://www.zim.gov.zw",
+      "American Samoa": "https://www.americansamoa.gov",
+      "Eswatini": "https://www.gov.sz"
+    };
+
+    /* Legend toggle */
+    function toggleLegend(){
+      const legend=document.getElementById('legend');
+      const btn=document.getElementById('legendToggle');
+      legend.classList.toggle('show');
+      btn.classList.toggle('active');
+      btn.textContent=legend.classList.contains('show')?'✕ Close':'📊 Legend';
+    }
+  </script>
+
+  <script>
+  // Run AFTER both OpenLayers and proj4 are present
+  window.addEventListener('load', function() {
+    if (!window.proj4) {
+      console.error('proj4 failed to load');
+      return;
+    }
+    if (!window.ol) {
+      console.warn('Primary OL CDN failed; trying unpkg fallback…');
+      const s = document.createElement('script');
+      s.src = 'https://unpkg.com/ol@10.6.1/dist/ol.js';
+      s.onload = initWintri;
+      s.onerror = () => console.error('OpenLayers failed to load from both CDNs.');
+      document.head.appendChild(s);
+    } else {
+      initWintri();
+    }
+
+    function initWintri() {
+      // --- Alternative approach: Try different projection definitions ---
+      
+      // Define a tighter extent that focuses on the inhabited world
+      const WORLD_EXTENT = [-18000000, -8500000, 18000000, 8500000];
+      
+      try {
+        // First, let's check what proj4 version we have
+        console.log('proj4 version:', proj4.version || 'unknown');
+        
+        // Try a simpler approach - use a custom projection name
+        const wintriDef = '+proj=robin +datum=WGS84 +no_defs';  // Robinson as fallback
+        console.log('Defining projection with:', wintriDef);
+        proj4.defs('CUSTOM:WINTRI', wintriDef);
+        
+        // Register with OpenLayers
+        ol.proj.proj4.register(proj4);
+        
+        // Verify projection is available
+        const wintri = ol.proj.get('CUSTOM:WINTRI');
+        if (!wintri) {
+          console.error('Failed to register custom projection');
+          return;
+        }
+        
+        console.log('Projection successfully registered');
+        
+        wintri.setExtent(WORLD_EXTENT);
+      } catch (error) {
+        console.error('Error setting up projection:', error);
+        return;
+      }
+
+      // Countries (Natural Earth) reprojected client-side
+      const countriesSource = new ol.source.Vector();
+      fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson')
+        .then(r => r.json())
+        .then(geo => {
+          try {
+            const fmt = new ol.format.GeoJSON();
+            const feats = fmt.readFeatures(geo, { dataProjection:'EPSG:4326', featureProjection:'CUSTOM:WINTRI' });
+            countriesSource.addFeatures(feats);
+            console.log('Successfully loaded and transformed country boundaries');
+          } catch (error) {
+            console.error('Failed to transform country features:', error);
+          }
+        })
+        .catch(() => console.warn('World countries failed to load; continuing with points only.'));
+
+      const countries = new ol.layer.Vector({
+        source: countriesSource,
+        style: new ol.style.Style({
+          fill: new ol.style.Fill({ color: 'rgba(255,255,255,0.95)' }),
+          stroke: new ol.style.Stroke({ color: '#D4D9DE', width: 0.6 })
+        })
+      });
+
+    const levelColor = (lvl) => ({ elite:'#1d333e', high:'#2B74B3', active:'#6BA7D6' }[lvl] || '#AAB8C2');
+
+    function programsToFeatures() {
+      const feats = [];
+      Object.entries(programData).forEach(([country, d]) => {
+        try {
+          const programs = d.programs || [];
+          const level = programs.length >= 3 ? 'elite' : programs.length === 2 ? 'high' : programs.length === 1 ? 'active' : 'none';
+          const coord = ol.proj.transform([d.lng, d.lat], 'EPSG:4326', 'CUSTOM:WINTRI');
+          const f = new ol.Feature({ geometry: new ol.geom.Point(coord), country, programs, bigScholars: d.bigScholars || null, level });
+          feats.push(f);
+        } catch (error) {
+          console.warn(`Failed to transform coordinates for ${country}:`, error);
+        }
+      });
+      return feats;
+    }
+
+    const programsLayer = new ol.layer.Vector({
+      source: new ol.source.Vector({ features: programsToFeatures() }),
+      style: (f, res) => {
+        const lvl = f.get('level');
+        // Make dots even larger - increased all sizes
+        const r = res < 2500 ? 14 : res < 6000 ? 12 : 10;
+        return new ol.style.Style({
+          image: new ol.style.Circle({
+            radius: r,
+            fill: new ol.style.Fill({ color: levelColor(lvl) }),
+            stroke: new ol.style.Stroke({ color: '#FFFFFF', width: 2 })
+          })
+        });
+      }
+    });
+
+      // Create map (no ol.control.defaults — avoid version differences)
+      let mapCenter;
+      try {
+        mapCenter = ol.proj.transform([0, 15], 'EPSG:4326', 'CUSTOM:WINTRI');
+      } catch (error) {
+        console.error('Failed to transform map center coordinates:', error);
+        mapCenter = [0, 0]; // fallback to origin
+      }
+      
+      const map = new ol.Map({
+        target: 'map',
+        layers: [countries, programsLayer],
+        view: new ol.View({
+          projection: 'CUSTOM:WINTRI',
+          center: mapCenter,
+          zoom: 3.2,
+          minZoom: 2.8,
+          maxZoom: 8,
+          extent: WORLD_EXTENT,
+          showFullExtent: true
+        })
+      });
+
+    // Fit to world extent with constraints to prevent empty space
+    map.getView().fit(WORLD_EXTENT, { 
+      size: map.getSize(), 
+      padding: [50, 50, 50, 50],
+      minResolution: map.getView().getResolutionForZoom(2.8),
+      maxZoom: 4.0 
+    });
+
+    // Popup
+    const popupEl = document.getElementById('popup');
+    const popupContent = document.getElementById('popup-content');
+    const overlay = new ol.Overlay({ element: popupEl, offset: [0, -10], stopEvent: true });
+    map.addOverlay(overlay);
+
+    // Create hover tooltip element
+    const tooltip = document.createElement('div');
+    tooltip.className = 'hover-tooltip';
+    tooltip.style.display = 'none';
+    document.body.appendChild(tooltip);
+
+    map.on('singleclick', (evt) => {
+      // Only handle website navigation on click, no popup display
+      map.forEachFeatureAtPixel(evt.pixel, (feat, layer) => {
+        if (layer !== programsLayer) return;
+        
+        const country = feat.get('country');
+        const countryUrl = countryWebsites[country];
+        
+        // Navigate to country website if available
+        if (countryUrl) {
+          window.open(countryUrl, '_blank');
+        }
+        return true;
+      });
+    });
+
+    // Add hover tooltip and pointer cursor functionality
+    map.on('pointermove', (evt) => {
+      const hit = map.hasFeatureAtPixel(evt.pixel, {
+        layerFilter: (layer) => layer === programsLayer
+      });
+      
+      // Get map target element safely with fallback
+      const mapTarget = map.getTargetElement() || document.getElementById('map');
+      
+      if (hit) {
+        if (mapTarget) mapTarget.style.cursor = 'pointer';
+        
+        // Show detailed hover tooltip like the click popup
+        map.forEachFeatureAtPixel(evt.pixel, (feat, layer) => {
+          if (layer === programsLayer) {
+            const country = feat.get('country');
+            const programs = feat.get('programs') || [];
+            const hasBIG = programs.includes('BIG');
+            const big = feat.get('bigScholars');
+            
+            // Build the detailed tooltip content
+            const chips = programs.length
+              ? `<div class="popup-programs">${programs.map(x => `<span class="popup-program ${x.toLowerCase()}">${x}</span>`).join('')}</div>` : '';
+
+            const bigSection = (hasBIG && big) ? `
+              <div class="big-scholars-section">
+                <div class="big-scholars-title">🎓 BIG Scholars by Year:</div>
+                ${Object.entries(big).map(([y, arr]) => `
+                  <div class="year-group">
+                    <div class="year-label">${y}</div>
+                    <div class="scholars-list">${arr.map(n => `<span class="scholar-name">${n}</span>`).join('')}</div>
+                  </div>`).join('')}
+              </div>` : '';
+
+            tooltip.innerHTML = `
+              <div class="popup-title">${country}</div>
+              <div>${programs.length ? `Programs (${programs.length}):` : 'No program participation'}</div>
+              ${chips}${bigSection}`;
+            tooltip.style.display = 'block';
+            
+            // Position tooltip relative to mouse event
+            const mapRect = mapTarget.getBoundingClientRect();
+            tooltip.style.left = (mapRect.left + evt.pixel[0]) + 'px';
+            tooltip.style.top = (mapRect.top + evt.pixel[1] - 10) + 'px';
+            return true;
+          }
+        });
+      } else {
+        if (mapTarget) mapTarget.style.cursor = '';
+        tooltip.style.display = 'none';
+      }
+    });
+
+    // Stats
+    (function updateStats(){
+      let stats = { elite: 0, high: 0, active: 0, totalPrograms: 0 };
+      Object.values(programData).forEach(d => {
+        const n = (d.programs || []).length;
+        stats.totalPrograms += n;
+        if (n >= 3) stats.elite++; else if (n === 2) stats.high++; else if (n === 1) stats.active++;
+      });
+      document.getElementById('elite-count').textContent = stats.elite;
+      document.getElementById('high-count').textContent  = stats.high;
+      document.getElementById('active-count').textContent= stats.active;
+      document.getElementById('total-countries').textContent = Object.keys(programData).length;
+      document.getElementById('total-programs').textContent  = stats.totalPrograms;
+    })();
+
+    // Make sure the toggle is visible above the canvas
+    const toggleBtn=document.getElementById('legendToggle');
+    if(toggleBtn){toggleBtn.style.display='block';toggleBtn.style.zIndex='2001'}
+  }
+  });
+</script>
 </body>
 </html>
