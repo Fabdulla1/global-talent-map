@@ -2,7 +2,7 @@
   "name": "global-talent-map",
   "version": "1.0.0",
   "description": "Interactive world map visualization displaying countries participating in Global Talent Fund programs",
-  "main": "leaflet_map.html",
+  "main": "index.html",
   "scripts": {
     "start": "python -m http.server 8000",
     "serve": "python3 -m http.server 8000",
