@@ -1,7 +1,16 @@
-folium>=0.14.0
+# Global Talent Map Requirements
+# This project is primarily a frontend HTML/JavaScript application using CDN dependencies
+# The requirements below are for optional data processing and local development server
+
+# Web server for local development (Python's built-in http.server is used)
+# No additional packages required for the main application
+
+# Optional: For data processing if needed
 pandas>=1.5.0
-geopandas>=0.13.0
-requests>=2.28.0
-numpy>=1.24.0
-shapely>=2.0.0
 openpyxl>=3.1.0
+
+# Note: The main application uses:
+# - OpenLayers 10.6.1 (loaded via CDN)
+# - proj4 2.9.0 (loaded via CDN)
+# - Natural Earth country data (fetched from GitHub)
+# - Inter font family (loaded via Google Fonts)

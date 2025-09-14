@@ -1,26 +1,61 @@
-.Rproj.user
-.Rhistory
-.RData
-.Ruserdata
+# Project-specific ignores
+# Temporary and backup files
+*.tmp
+*.temp
+*.bak
+*~
 
-# Large geographic data files (downloaded automatically)
-geoBoundariesCGAZ_ADM0.geojson
-
-# Python virtual environment
+# Python virtual environment and cache
 .env/
+venv/
+env/
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
+*.egg-info/
 
-# Generated map files (can be regenerated)
-index.html
-
-# IDE files
+# IDE and editor files
 .vscode/
 .idea/
+*.sublime-*
+.atom/
 
 # OS files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Dependencies (if using npm/node for any reason)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Large data files that can be regenerated
+*.geojson.backup
+geographic_cache/
+
+# Personal configuration
+.env.local
+config.local.*
+
+# Generated documentation
+docs/_build/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*

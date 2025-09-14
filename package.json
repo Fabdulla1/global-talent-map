@@ -1,0 +1,43 @@
+{
+  "name": "global-talent-map",
+  "version": "1.0.0",
+  "description": "Interactive world map visualization displaying countries participating in Global Talent Fund programs",
+  "main": "leaflet_map.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "python3 -m http.server 8000",
+    "dev": "python -m http.server 8000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/global-talent-map.git"
+  },
+  "keywords": [
+    "map",
+    "visualization",
+    "talent",
+    "global",
+    "interactive",
+    "openlayers",
+    "education",
+    "scholars",
+    "geography"
+  ],
+  "author": "Global Talent Fund",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yourusername/global-talent-map/issues"
+  },
+  "homepage": "https://github.com/yourusername/global-talent-map#readme",
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "python": ">=3.6"
+  },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 Edge versions"
+  ]
+}
