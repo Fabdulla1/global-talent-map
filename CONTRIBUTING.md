@@ -18,7 +18,7 @@ Thank you for your interest in contributing to the Global Talent Map project! Th
    ```bash
    python -m http.server 8000
    ```
-5. **Open** `http://localhost:8000/leaflet_map.html` to test your changes
+5. **Open** `http://localhost:8000/` to test your changes
 
 ## 🎯 Types of Contributions
 
@@ -202,7 +202,7 @@ Include:
 - [Natural Earth Data](https://www.naturalearthdata.com/): Geographic data source
 
 ### Project-Specific
-- Review existing code in `leaflet_map.html`
+- Review existing code in `index.html`
 - Check `programData` object for data structure examples
 - Examine CSS variables in `:root` for styling constants
 

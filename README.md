@@ -60,13 +60,13 @@ python -m SimpleHTTPServer 8000
 ```
 
 ### 3. Open in Browser
-Navigate to: `http://localhost:8000/leaflet_map.html`
+Navigate to: `http://localhost:8000/`
 
 ## 🏗️ Project Structure
 
 ```
 global-talent-map/
-├── leaflet_map.html          # Main application file
+├── index.html               # Main application file
 ├── requirements.txt          # Optional Python dependencies
 ├── README.md                # Project documentation
 ├── data/                    # Data directory
@@ -202,7 +202,7 @@ pip install -r requirements.txt
 ```
 
 ### Making Changes
-1. Edit `leaflet_map.html` for application changes
+1. Edit `index.html` for application changes
 2. Test locally using the development server
 3. Commit changes following conventional commit standards
 
