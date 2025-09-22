@@ -25,6 +25,8 @@
       --shadow-soft:rgba(29,51,62,.08);
       --shadow-medium:rgba(29,51,62,.12);
       --shadow-strong:rgba(29,51,62,.16);
+      /* Vibrant dot colors */
+      --dot-elite:#0F172A; --dot-high:#1E40AF; --dot-active:#3B82F6;
     }
 
     html,body{margin:0;padding:0;height:100%;width:100%;overflow:hidden}
@@ -35,10 +37,11 @@
     #map{position:absolute;inset:0;background:var(--cream-bg);z-index:1}
 
     /* Legend / Stats (theme) */
-    .legend{position:fixed;top:65px;right:20px;width:320px;max-width:90vw;background:var(--warm-white);
+    .legend{position:fixed;top:90px;right:20px;width:320px;max-width:90vw;background:var(--warm-white);
       border:1px solid var(--border-light);border-radius:16px;padding:24px;
       box-shadow:0 8px 30px var(--shadow-medium);backdrop-filter:saturate(140%) blur(6px);
-      z-index:1999;transition:.3s cubic-bezier(.4,0,.2,1);transform:translateX(100%);opacity:0;visibility:hidden}
+      z-index:1999;transition:.3s cubic-bezier(.4,0,.2,1);transform:translateX(100%);opacity:0;visibility:hidden;
+      max-height:calc(100vh - 120px);overflow-y:auto}
     .legend.show{transform:translateX(0);opacity:1;visibility:visible}
     .legend-toggle{display:block!important;position:fixed;top:20px;right:20px;background:var(--navy-primary);
       color:var(--warm-white);border:none;border-radius:12px;padding:12px 16px;cursor:pointer;font-weight:600;font-size:14px;
@@ -53,9 +56,9 @@
     .legend-item{display:flex;align-items:center;margin-bottom:8px;padding:8px 12px;border-radius:10px;transition:.2s;gap:12px;cursor:pointer}
     .legend-item:hover{background:var(--soft-gray);transform:translateX(4px)}
     .legend-color{width:24px;height:24px;border-radius:50%;border:2px solid var(--warm-white);box-shadow:0 2px 8px var(--shadow-soft)}
-    .legend-color.elite{background:linear-gradient(135deg,var(--navy-primary),var(--navy-secondary))}
-    .legend-color.high{background:linear-gradient(135deg,var(--accent-blue),var(--navy-secondary))}
-    .legend-color.active{background:linear-gradient(135deg,var(--accent-blue-light),var(--accent-blue))}
+    .legend-color.elite{background:linear-gradient(135deg,var(--dot-elite),#334155)}
+    .legend-color.high{background:linear-gradient(135deg,var(--dot-high),#3730A3)}
+    .legend-color.active{background:linear-gradient(135deg,var(--dot-active),#2563EB)}
     .legend-text{flex:1;font-size:14px;font-weight:500;color:var(--navy-primary)}
     .legend-count{color:var(--light-navy);font-size:11px;font-weight:600;background:var(--soft-gray);padding:2px 6px;border-radius:10px;min-width:20px;text-align:center}
 
@@ -106,11 +109,17 @@
       min-width: 220px;
       pointer-events: none;
       z-index: 10001;
-      transform: translate(-50%, -100%);
-      margin-top: -8px;
       white-space: nowrap;
       font-family: 'Inter', sans-serif;
       font-size: 14px;
+    }
+    .hover-tooltip.above {
+      transform: translate(-50%, -100%);
+      margin-top: -8px;
+    }
+    .hover-tooltip.below {
+      transform: translate(-50%, 20px);
+      margin-top: 8px;
     }
     .hover-tooltip .popup-title {
       font-size: 16px;
@@ -173,14 +182,14 @@
 
     /* Mobile tweaks */
     @media (max-width:768px){
-      .legend{top:60px;right:10px;left:10px;width:auto;max-height:70vh;overflow:auto}
+      .legend{top:85px;right:10px;left:10px;width:auto;max-height:calc(100vh - 110px);overflow:auto}
       .legend.show{transform:translateY(0)}
       .legend-toggle{top:10px;right:10px;padding:10px 14px;font-size:13px}
       .stats{bottom:10px;left:10px;padding:10px 14px}
       .stat-number{font-size:18px}
     }
     @media (max-width:480px){
-      .legend{width:90vw;top:5px;right:5px;padding:18px}
+      .legend{width:90vw;top:80px;right:5px;padding:18px;max-height:calc(100vh - 105px)}
       .legend-toggle{font-size:12px;padding:10px 14px}
       .stats{bottom:5px;left:5px;font-size:11px;padding:8px 10px}
     }
@@ -522,7 +531,11 @@
         })
       });
 
-    const levelColor = (lvl) => ({ elite:'#1d333e', high:'#2B74B3', active:'#6BA7D6' }[lvl] || '#AAB8C2');
+    const levelColor = (lvl) => ({ 
+      elite: '#0F172A', 
+      high: '#1E40AF', 
+      active: '#3B82F6' 
+    }[lvl] || '#AAB8C2');
 
     function programsToFeatures() {
       const feats = [];
@@ -657,8 +670,20 @@
             
             // Position tooltip relative to mouse event
             const mapRect = mapTarget.getBoundingClientRect();
-            tooltip.style.left = (mapRect.left + evt.pixel[0]) + 'px';
-            tooltip.style.top = (mapRect.top + evt.pixel[1] - 10) + 'px';
+            const mouseX = mapRect.left + evt.pixel[0];
+            const mouseY = mapRect.top + evt.pixel[1];
+            
+            // Check if cursor is in top 30% of screen - if so, show tooltip below
+            const isNearTop = mouseY < window.innerHeight * 0.3;
+            
+            if (isNearTop) {
+              tooltip.className = 'hover-tooltip below';
+            } else {
+              tooltip.className = 'hover-tooltip above';
+            }
+            
+            tooltip.style.left = mouseX + 'px';
+            tooltip.style.top = mouseY + 'px';
             return true;
           }
         });
