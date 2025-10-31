@@ -42,15 +42,15 @@ COUNTRY_COORDINATES = {
     "Ukraine": {"lat": 48.3794, "lng": 31.1656},
     "Mongolia": {"lat": 47.8864, "lng": 106.9057},
     "El Salvador": {"lat": 13.7942, "lng": -88.8965},
-    "Philippines": {"lat": 12.8797, "lng": 121.7740},
+    "The Philippines": {"lat": 12.8797, "lng": 121.7740},
     "Georgia": {"lat": 42.3154, "lng": 43.3569},
     "Costa Rica": {"lat": 9.7489, "lng": -83.7534},
     "Bhutan": {"lat": 27.5142, "lng": 90.4336},
     "Rwanda": {"lat": -1.9403, "lng": 29.8739},
     "Bulgaria": {"lat": 42.7339, "lng": 25.4858},
     "Hungary": {"lat": 47.1625, "lng": 19.5033},
-    "Turkey": {"lat": 38.9637, "lng": 35.2433},
-    "Indonesia": {"lat": -0.7893, "lng": 113.9213},
+    "Türkiye": {"lat": 38.9637, "lng": 35.2433},
+    "Indonesia": {"lat": -6.0092, "lng": 106.5373},
     "Iran": {"lat": 32.4279, "lng": 53.6880},
     "Belarus": {"lat": 53.7098, "lng": 27.9534},
     "Greece": {"lat": 39.0742, "lng": 21.8243},
@@ -60,7 +60,7 @@ COUNTRY_COORDINATES = {
     "Cyprus": {"lat": 35.1264, "lng": 33.4299},
     "Armenia": {"lat": 40.0691, "lng": 45.0382},
     "North Macedonia": {"lat": 41.6086, "lng": 21.7453},
-    "Netherlands": {"lat": 52.1326, "lng": 5.2913},
+    "The Netherlands": {"lat": 52.1326, "lng": 5.2913},
     "Uzbekistan": {"lat": 41.3775, "lng": 64.5853},
     "Albania": {"lat": 41.1533, "lng": 20.1683},
     "Algeria": {"lat": 28.0339, "lng": 1.6596},
@@ -89,7 +89,7 @@ COUNTRY_COORDINATES = {
     "Nepal": {"lat": 28.3949, "lng": 84.1240},
     "Nicaragua": {"lat": 12.2651, "lng": -85.2072},
     "Pakistan": {"lat": 30.3753, "lng": 69.3451},
-    "Palestine": {"lat": 31.9522, "lng": 35.2332},
+    "West Bank and Gaza": {"lat": 31.9522, "lng": 35.2332},
     "Peru": {"lat": -9.1900, "lng": -75.0152},
     "South Korea": {"lat": 35.9078, "lng": 127.7669},
     "South Sudan": {"lat": 6.8770, "lng": 31.3070},
@@ -128,7 +128,8 @@ def normalize_country_name(country):
     name_mapping = {
         "Bosnia": "Bosnia and Herzegovina",
         "Eswatini": "Eswatini",
-        "UK": "United Kingdom"
+        "UK": "United Kingdom",
+        "Turkey": "Türkiye"
         # Add more mappings as needed
     }
     return name_mapping.get(country, country)
@@ -212,7 +213,7 @@ def generate_program_data():
         "Colombia": ["NATIONS"],
         "Egypt": ["EXCL", "STAR"],
         "Kazakhstan": ["NATIONS"],
-        "Philippines": ["NATIONS", "STAR"],
+        "The Philippines": ["NATIONS", "STAR"],
         "Georgia": ["NATIONS", "STAR"],
         "Bhutan": ["EXCL", "STAR"],
         "Rwanda": ["NATIONS", "EXCL", "STAR"],
@@ -243,7 +244,7 @@ def generate_program_data():
         "Nepal": ["STAR"],
         "Nicaragua": ["EXCL", "STAR"],
         "Pakistan": ["NATIONS", "STAR"],
-        "Palestine": ["STAR"]
+        "West Bank and Gaza": ["STAR"]
     }
     
     # Get all countries that have data
