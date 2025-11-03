@@ -25,6 +25,13 @@
       --shadow-soft:rgba(29,51,62,.08);
       --shadow-medium:rgba(29,51,62,.12);
       --shadow-strong:rgba(29,51,62,.16);
+      --forest-green:rgba(30, 86, 49, 1);
+      --burnt-orange:rgba(195, 74, 44, 1);
+      --deep-violet:rgba(107, 30, 109, 1);
+      --charcoal-gray:rgba(46, 46, 46, 1);
+      --olive-brown:rgba(110, 78, 30, 1);
+
+
       /* Vibrant dot colors */
       --dot-elite:#0F172A; --dot-high:#1E40AF; --dot-active:#3B82F6;
     }
@@ -88,8 +95,8 @@
     .popup-title{font-size:16px;font-weight:800;margin-bottom:8px}
     .popup-programs{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
     .popup-program{padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;color:var(--warm-white)}
-    .popup-program.star{background:var(--navy-primary)} .popup-program.nations{background:var(--light-navy)}
-    .popup-program.big{background:var(--accent-blue)} .popup-program.excl{background:var(--navy-secondary)}
+    .popup-program.star{background:var(--forest-green)} .popup-program.nations{background:var(--burnt-orange)}
+    .popup-program.big{background:var(--deep-violet)} .popup-program.excl{background:var(--olive-brown)}
     .big-scholars-section{margin-top:10px;padding-top:8px;border-top:1px solid var(--border-light)}
     .big-scholars-title{font-size:12px;font-weight:600;color:var(--accent-blue);margin-bottom:6px}
     .year-group{margin-bottom:6px}.year-label{font-size:11px;font-weight:700;color:var(--navy-secondary);margin-bottom:3px}
@@ -139,10 +146,10 @@
       font-weight: 600;
       color: var(--warm-white);
     }
-    .hover-tooltip .popup-program.star { background: var(--navy-primary); }
-    .hover-tooltip .popup-program.nations { background: var(--light-navy); }
-    .hover-tooltip .popup-program.big { background: var(--accent-blue); }
-    .hover-tooltip .popup-program.excl { background: var(--navy-secondary); }
+    .hover-tooltip .popup-program.star { background: var(--forest-green); }
+    .hover-tooltip .popup-program.nations { background: var(--burnt-orange); }
+    .hover-tooltip .popup-program.big { background: var(--deep-violet); }
+    .hover-tooltip .popup-program.excl { background: var(--olive-brown); }
     .hover-tooltip .big-scholars-section {
       margin-top: 10px;
       padding-top: 8px;
@@ -245,15 +252,19 @@
         <div class ="legend-section-title">Full Program Names</div>
         <div class ="legend-item">
             <span class="popup-program big">BIG</span>
-            <div class="legend-text">Backing Ingenuity for Growth</div>
+            <div class="legend-text">Backing Ingenuity for Growth -- scholarships</div>
+        </div>
+        <div class ="legend-item">
+            <span class="popup-program nations">NATIONS</span>
+            <div class="legend-text">NATIONS grants to organizations</div>
         </div>
         <div class ="legend-item">
             <span class="popup-program excl">EXCL</span>
-            <div class="legend-text">Excellence in Coaching and Leadership</div>
+            <div class="legend-text">Excellence in Coaching and Leadership -- coaches' training</div>
         </div>
         <div class ="legend-item">
             <span class="popup-program star">STAR</span>
-            <div class="legend-text">Search for Talented Ramanujans</div>
+            <div class="legend-text">Search for Talented Ramanujans -- support to highschoolers</div>
         </div>
       </div>
       <div class="legend-section">
@@ -1309,9 +1320,18 @@
                   </div>`).join('')}
               </div>` : '';
 
+            // Build the tooltip content dynamically
+            let extraText = '';
+
+            // --- Add a custom line for the UK and France ---
+            if (country === 'United Kingdom' || country == 'France') {
+                  extraText = `<div style="margin-top:6px; font-size:13px; color:var(--light-navy);">
+                  Host country for the BIG Program
+                  </div>`;
+            }
             tooltip.innerHTML = `
               <div class="popup-title">${country}</div>
-              ${chips}${bigSection}`;
+              ${chips}${extraText}${bigSection}`;
             tooltip.style.display = 'block';
             
             // Position tooltip relative to mouse event
