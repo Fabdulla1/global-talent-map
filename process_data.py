@@ -198,7 +198,7 @@ def generate_program_data():
         "Canada": ["NATIONS", "STAR"],
         "United Kingdom": ["BIG", "EXCL", "STAR"],
         "Germany": ["BIG", "NATIONS", "EXCL", "STAR"],
-        "France": ["NATIONS"],
+        "France": ["BIG", "NATIONS"],
         "India": ["BIG", "STAR"],
         "China": ["BIG"],
         "Japan": ["NATIONS", "STAR"],

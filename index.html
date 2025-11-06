@@ -60,8 +60,7 @@
     .legend-subtitle{font-size:13px;color:var(--light-navy);font-weight:500;letter-spacing:.25px}
     .legend-section{margin-bottom:16px}
     .legend-section-title{font-size:13px;font-weight:600;color:var(--navy-secondary);margin-bottom:10px}
-    .legend-item{display:flex;align-items:center;margin-bottom:8px;padding:8px 12px;border-radius:10px;transition:.2s;gap:12px;cursor:pointer}
-    .legend-item:hover{background:var(--soft-gray);transform:translateX(4px)}
+    .legend-item{display:flex;align-items:center;margin-bottom:8px;padding:8px 12px;border-radius:10px;transition:.2s;gap:12px}
     .legend-color{width:24px;height:24px;border-radius:50%;border:2px solid var(--warm-white);box-shadow:0 2px 8px var(--shadow-soft)}
     .legend-color.elite{background:linear-gradient(135deg,var(--dot-elite),#334155)}
     .legend-color.high{background:linear-gradient(135deg,var(--dot-high),#3730A3)}
@@ -215,10 +214,11 @@
     <button class="legend-toggle" onclick="toggleLegend()" id="legendToggle">📊 Legend</button>
 
     <div class="legend" id="legend">
-      <!--<div class="legend-header">
+      <div class="legend-header">
         <div class="legend-title">🌍 Global Talent Map</div>
-        <div class="legend-subtitle">Winkel Tripel • Fair-size compromise</div>
-      </div>-->
+        <!--<div class="legend-subtitle">Winkel Tripel • Fair-size compromise</div>-->
+      </div>
+      
 
       <div class="legend-section">
         <div class="legend-item">
@@ -232,24 +232,24 @@
 
         <div class="legend-item">
           <div class="legend-color elite"></div>
-          <div class="legend-text">3+ programs 💎</div>
+          <div class="legend-text">3+ programs</div>
           <div class="legend-count" id="elite-count">0</div>
         </div>
 
         <div class="legend-item">
           <div class="legend-color high"></div>
-          <div class="legend-text">2 programs 🔷</div>
+          <div class="legend-text">2 programs</div>
           <div class="legend-count" id="high-count">0</div>
         </div>
 
         <div class="legend-item">
           <div class="legend-color active"></div>
-          <div class="legend-text">1 program 🔹</div>
+          <div class="legend-text">1 program</div>
           <div class="legend-count" id="active-count">0</div>
         </div>
       </div>
       <div class ="legend-section">
-        <div class ="legend-section-title">Full Program Names</div>
+        <div class ="legend-section-title">Programs:</div>
         <div class ="legend-item">
             <span class="popup-program big">BIG</span>
             <div class="legend-text">Backing Ingenuity for Growth -- scholarships</div>
@@ -271,57 +271,131 @@
         <div class = "legend-text">Countries and regions with BIG Scholars or NATIONS grantees have individual profile pages.</div>
       </div>
       <div class="legend-section">
-        <div class="legend-section-title"><em>Map credit: <a href="https://github.com/topojson/world-atlas">Natural Earth 110m Admin 0 Countries (GitHub)</a>, not an endorsement of lines.</em></div>
+        <div class="legend-section-title"><p><i>Map data: “topojson/world-atlas” (version X.Y.Z) by TopoJSON, distributed under the ISC License. Source: <a href="https://github.com/topojson/world-atlas" target = "_blank">https://github.com/topojson/world-atlas</a></i></p>
+        <p><i>Original vector data: Natural Earth (Version 4.1.0).</i></p></div>
       </div>
     </div>
   <script>
     /* ---------- DATA: keep exactly as-is from your app ---------- */
     const programData = {
-      "Spain/Brazil": {
-            "programs": [
-                  "BIG"
-            ],
-            "bigScholars": {
-                  "2025": [
-                        "Ruben Mason Carpenter"
-                  ]
-            }
-      },
-      "South Africa": {
+      "Nigeria": {
             "programs": [
                   "NATIONS",
-                  "STAR"
-            ],
-            "lat": -30.5595,
-            "lng": 22.9375
-      },
-      "Hong Kong, China": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 22.7919,
-            "lng": 114.7157,
-            "bigScholars": {
-                  "2024": [
-                        "Clement Hui"
-                  ]
-            }
-      },
-      "Egypt": {
-            "programs": [
                   "EXCL",
                   "STAR"
             ],
-            "lat": 26.8206,
-            "lng": 30.8025
+            "lat": 9.082,
+            "lng": 8.6753
       },
-      "Canada": {
+      "Ethiopia": {
             "programs": [
                   "NATIONS",
                   "STAR"
             ],
-            "lat": 56.1304,
-            "lng": -106.3468
+            "lat": 9.145,
+            "lng": 40.4897
+      },
+      "Kyrgyzstan": {
+            "programs": [
+                  "NATIONS",
+                  "STAR"
+            ],
+            "lat": 41.2044,
+            "lng": 74.7661
+      },
+      "Ukraine": {
+            "programs": [
+                  "BIG"
+            ],
+            "lat": 48.3794,
+            "lng": 31.1656,
+            "bigScholars": {
+                  "2024": [
+                        "Yevheniia Frankevych",
+                        "Volodymyr Chub",
+                        "Alisa Potomkina",
+                        "Ivan Bortnovskyi"
+                  ],
+                  "2025": [
+                        "Daniil Shvaiko",
+                        "Oles Hordiichuk",
+                        "Kseniia Drozdova",
+                        "Ihnat Zharikhin",
+                        "Viktor Lukianikhin"
+                  ]
+            }
+      },
+      "Namibia": {
+            "programs": [
+                  "NATIONS"
+            ],
+            "lat": -22.9576,
+            "lng": 18.4904
+      },
+      "United Kingdom": {
+            "programs": [
+                  "BIG",
+                  "EXCL",
+                  "STAR"
+            ],
+            "lat": 55.3781,
+            "lng": -3.436,
+            "bigScholars": {
+                  "2024": [
+                        "Sida Li",
+                        "Huyen Ngoc Pham"
+                  ],
+                  "2025": [
+                        "Emily Wong"
+                  ]
+            }
+      },
+      "Cuba": {
+            "programs": [
+                  "STAR"
+            ],
+            "lat": 21.5218,
+            "lng": -77.7812
+      },
+      "Cyprus": {
+            "programs": [
+                  "BIG"
+            ],
+            "lat": 35.1264,
+            "lng": 33.4299,
+            "bigScholars": {
+                  "2025": [
+                        "Filippos Athos"
+                  ]
+            }
+      },
+      "Costa Rica": {
+            "programs": [
+                  "BIG"
+            ],
+            "lat": 9.7489,
+            "lng": -83.7534,
+            "bigScholars": {
+                  "2024": [
+                        "Gabriel Najmias"
+                  ]
+            }
+      },
+      "Lithuania": {
+            "programs": [
+                  "NATIONS",
+                  "STAR"
+            ],
+            "lat": 55.1694,
+            "lng": 23.8813
+      },
+      "France": {
+            "programs": [
+                  "BIG",
+                  "NATIONS"
+            ],
+            "lat": 46.2276,
+            "lng": 2.2137
       },
       "Belarus": {
             "programs": [
@@ -335,6 +409,88 @@
                   ]
             }
       },
+      "Rwanda": {
+            "programs": [
+                  "NATIONS",
+                  "EXCL",
+                  "STAR"
+            ],
+            "lat": -1.9403,
+            "lng": 29.8739
+      },
+      "Japan": {
+            "programs": [
+                  "NATIONS",
+                  "STAR"
+            ],
+            "lat": 36.2048,
+            "lng": 138.2529
+      },
+      "Northern Macedonia": {
+            "programs": [
+                  "BIG"
+            ],
+            "bigScholars": {
+                  "2025": [
+                        "Aleksij Tasikj"
+                  ]
+            }
+      },
+      "Bolivia": {
+            "programs": [
+                  "STAR"
+            ],
+            "lat": -16.2902,
+            "lng": -63.5887
+      },
+      "Iran": {
+            "programs": [
+                  "BIG"
+            ],
+            "lat": 32.4279,
+            "lng": 53.688,
+            "bigScholars": {
+                  "2025": [
+                        "Radin Zahedigolpayegani",
+                        "Parsa Saberi"
+                  ]
+            }
+      },
+      "Italy": {
+            "programs": [
+                  "EXCL"
+            ],
+            "lat": 41.8719,
+            "lng": 12.5674
+      },
+      "Bhutan": {
+            "programs": [
+                  "EXCL",
+                  "STAR"
+            ],
+            "lat": 27.5142,
+            "lng": 90.4336
+      },
+      "Greece": {
+            "programs": [
+                  "BIG"
+            ],
+            "lat": 39.0742,
+            "lng": 21.8243,
+            "bigScholars": {
+                  "2025": [
+                        "Kyriakos Tsourekas",
+                        "Sokratis Iliadis"
+                  ]
+            }
+      },
+      "Ivory Coast": {
+            "programs": [
+                  "STAR"
+            ],
+            "lat": 7.54,
+            "lng": -5.5471
+      },
       "El Salvador": {
             "programs": [
                   "BIG"
@@ -347,22 +503,90 @@
                   ]
             }
       },
-      "Rwanda": {
+      "Jordan": {
             "programs": [
                   "NATIONS",
+                  "STAR"
+            ],
+            "lat": 30.5852,
+            "lng": 36.2384
+      },
+      "UK/Hong Kong": {
+            "programs": [
+                  "BIG"
+            ],
+            "bigScholars": {
+                  "2025": [
+                        "Hanks Chong"
+                  ]
+            }
+      },
+      "Mexico": {
+            "programs": [
+                  "NATIONS"
+            ],
+            "lat": 23.6345,
+            "lng": -102.5528
+      },
+      "Singapore": {
+            "programs": [
+                  "BIG"
+            ],
+            "lat": 1.3521,
+            "lng": 103.8198,
+            "bigScholars": {
+                  "2025": [
+                        "Xing Shen"
+                  ]
+            }
+      },
+      "Nicaragua": {
+            "programs": [
                   "EXCL",
                   "STAR"
             ],
-            "lat": -1.9403,
-            "lng": 29.8739
+            "lat": 12.2651,
+            "lng": -85.2072
       },
-      "Botswana": {
+      "Czech Republic": {
             "programs": [
-                  "NATIONS",
                   "STAR"
             ],
-            "lat": -22.3285,
-            "lng": 24.6849
+            "lat": 49.8175,
+            "lng": 15.473
+      },
+      "Romania": {
+            "programs": [
+                  "BIG"
+            ],
+            "lat": 45.9432,
+            "lng": 24.9668,
+            "bigScholars": {
+                  "2024": [
+                        "Mara Ioana Zaharia",
+                        "Alexandru Momoiu",
+                        "Andrei Chirita",
+                        "Vlad-Titus Spataru"
+                  ],
+                  "2025": [
+                        "Pavel Ciurea"
+                  ]
+            }
+      },
+      "Russia": {
+            "programs": [
+                  "NATIONS",
+                  "EXCL"
+            ],
+            "lat": 61.524,
+            "lng": 105.3188
+      },
+      "Nepal": {
+            "programs": [
+                  "STAR"
+            ],
+            "lat": 28.3949,
+            "lng": 84.124
       },
       "Morocco": {
             "programs": [
@@ -373,61 +597,95 @@
             "lat": 31.7917,
             "lng": -7.0926
       },
-      "Japan": {
+      "Georgia": {
             "programs": [
                   "NATIONS",
                   "STAR"
             ],
-            "lat": 36.2048,
-            "lng": 138.2529
+            "lat": 42.3154,
+            "lng": 43.3569
       },
-      "Guatemala": {
-            "programs": [
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 15.7835,
-            "lng": -90.2308
-      },
-      "Algeria": {
-            "programs": [
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 28.0339,
-            "lng": 1.6596
-      },
-      "Serbia": {
+      "T\u00fcrkiye": {
             "programs": [
                   "BIG"
             ],
-            "lat": 44.0165,
-            "lng": 21.0059,
+            "lat": 38.9637,
+            "lng": 35.2433,
             "bigScholars": {
                   "2024": [
-                        "Gvozden Lapcevic"
+                        "Cagan Ahmet Yanmaz"
                   ],
                   "2025": [
-                        "Janko Popovic",
-                        "Novak Despotovic"
+                        "Alp Terliksiz"
                   ]
             }
       },
-      "Ethiopia": {
+      "Canada": {
             "programs": [
                   "NATIONS",
                   "STAR"
             ],
-            "lat": 9.145,
-            "lng": 40.4897
+            "lat": 56.1304,
+            "lng": -106.3468
       },
-      "Lithuania": {
+      "Indonesia": {
+            "programs": [
+                  "BIG"
+            ],
+            "lat": -6.0092,
+            "lng": 106.5373,
+            "bigScholars": {
+                  "2025": [
+                        "Kevin Adi Senjaya"
+                  ]
+            }
+      },
+      "United States": {
             "programs": [
                   "NATIONS",
                   "STAR"
             ],
-            "lat": 55.1694,
-            "lng": 23.8813
+            "lat": 39.8283,
+            "lng": -98.5795
+      },
+      "West Bank and Gaza": {
+            "programs": [
+                  "STAR"
+            ],
+            "lat": 31.9522,
+            "lng": 35.2332
+      },
+      "South Africa": {
+            "programs": [
+                  "NATIONS",
+                  "STAR"
+            ],
+            "lat": -30.5595,
+            "lng": 22.9375
+      },
+      "Uzbekistan": {
+            "programs": [
+                  "BIG"
+            ],
+            "lat": 41.3775,
+            "lng": 64.5853,
+            "bigScholars": {
+                  "2025": [
+                        "Javohir Sadullayev"
+                  ]
+            }
+      },
+      "Finland": {
+            "programs": [
+                  "BIG"
+            ],
+            "lat": 61.9241,
+            "lng": 25.7482,
+            "bigScholars": {
+                  "2025": [
+                        "Aino Aulanko"
+                  ]
+            }
       },
       "Hungary": {
             "programs": [
@@ -454,145 +712,12 @@
             "lat": -0.0236,
             "lng": 37.9062
       },
-      "United Kingdom": {
-            "programs": [
-                  "BIG",
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 55.3781,
-            "lng": -3.436,
-            "bigScholars": {
-                  "2024": [
-                        "Sida Li",
-                        "Huyen Ngoc Pham"
-                  ],
-                  "2025": [
-                        "Emily Wong"
-                  ]
-            }
-      },
-      "Uzbekistan": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 41.3775,
-            "lng": 64.5853,
-            "bigScholars": {
-                  "2025": [
-                        "Javohir Sadullayev"
-                  ]
-            }
-      },
-      "Chile": {
-            "programs": [
-                  "NATIONS"
-            ],
-            "lat": -35.6751,
-            "lng": -71.543
-      },
-      "Bolivia": {
+      "Cameroon": {
             "programs": [
                   "STAR"
             ],
-            "lat": -16.2902,
-            "lng": -63.5887
-      },
-      "Mongolia": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 47.8864,
-            "lng": 106.9057,
-            "bigScholars": {
-                  "2024": [
-                        "Dulguun Gansukh"
-                  ]
-            }
-      },
-      "Argentina": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": -38.4161,
-            "lng": -63.6167
-      },
-      "Czech Republic": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 49.8175,
-            "lng": 15.473
-      },
-      "Costa Rica": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 9.7489,
-            "lng": -83.7534,
-            "bigScholars": {
-                  "2024": [
-                        "Gabriel Najmias"
-                  ]
-            }
-      },
-      "Mexico": {
-            "programs": [
-                  "NATIONS"
-            ],
-            "lat": 23.6345,
-            "lng": -102.5528
-      },
-      "UK/Hong Kong": {
-            "programs": [
-                  "BIG"
-            ],
-            "bigScholars": {
-                  "2025": [
-                        "Hanks Chong"
-                  ]
-            }
-      },
-      "France": {
-            "programs": [
-                  "NATIONS"
-            ],
-            "lat": 46.2276,
-            "lng": 2.2137
-      },
-      "Russia": {
-            "programs": [
-                  "NATIONS",
-                  "EXCL"
-            ],
-            "lat": 61.524,
-            "lng": 105.3188
-      },
-      "Greece": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 39.0742,
-            "lng": 21.8243,
-            "bigScholars": {
-                  "2025": [
-                        "Kyriakos Tsourekas",
-                        "Sokratis Iliadis"
-                  ]
-            }
-      },
-      "Iran": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 32.4279,
-            "lng": 53.688,
-            "bigScholars": {
-                  "2025": [
-                        "Radin Zahedigolpayegani",
-                        "Parsa Saberi"
-                  ]
-            }
+            "lat": 7.3697,
+            "lng": 12.3547
       },
       "Lesotho": {
             "programs": [
@@ -601,167 +726,54 @@
             "lat": -29.61,
             "lng": 28.2336
       },
-      "West Bank and Gaza": {
+      "Australia": {
             "programs": [
-                  "STAR"
-            ],
-            "lat": 31.9522,
-            "lng": 35.2332
-      },
-      "Malaysia": {
-            "programs": [
+                  "BIG",
                   "NATIONS",
                   "STAR"
             ],
-            "lat": 4.2105,
-            "lng": 101.9758
+            "lat": -25.2744,
+            "lng": 133.7751,
+            "bigScholars": {
+                  "2024": [
+                        "Arthur Sun"
+                  ],
+                  "2025": [
+                        "Andy Wu"
+                  ]
+            }
       },
-      "Nigeria": {
-            "programs": [
-                  "NATIONS",
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 9.082,
-            "lng": 8.6753
-      },
-      "Romania": {
+      "Hong Kong, China": {
             "programs": [
                   "BIG"
             ],
-            "lat": 45.9432,
-            "lng": 24.9668,
+            "lat": 22.7919,
+            "lng": 114.7157,
             "bigScholars": {
                   "2024": [
-                        "Mara Ioana Zaharia",
-                        "Alexandru Momoiu",
-                        "Andrei Chirita",
-                        "Vlad-Titus Spataru"
-                  ],
-                  "2025": [
-                        "Pavel Ciurea"
+                        "Clement Hui"
                   ]
             }
       },
-      "India": {
+      "China": {
             "programs": [
-                  "BIG",
-                  "STAR"
-            ],
-            "lat": 20.5937,
-            "lng": 78.9629,
-            "bigScholars": {
-                  "2024": [
-                        "Gunjan Aggarwal",
-                        "Ananda Bhaduri",
-                        "Rushil Mathur"
-                  ],
-                  "2025": [
-                        "Arjun Gupta",
-                        "Vedant Sakre",
-                        "Archit Manas"
-                  ]
-            }
+                  "BIG"
+            ]
       },
-      "Georgia": {
-            "programs": [
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": 42.3154,
-            "lng": 43.3569
-      },
-      "Namibia": {
+      "Colombia": {
             "programs": [
                   "NATIONS"
             ],
-            "lat": -22.9576,
-            "lng": 18.4904
+            "lat": 4.5709,
+            "lng": -74.2973
       },
-      "Nicaragua": {
-            "programs": [
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 12.2651,
-            "lng": -85.2072
-      },
-      "Jordan": {
+      "Botswana": {
             "programs": [
                   "NATIONS",
                   "STAR"
             ],
-            "lat": 30.5852,
-            "lng": 36.2384
-      },
-      "Pakistan": {
-            "programs": [
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": 30.3753,
-            "lng": 69.3451
-      },
-      "Bhutan": {
-            "programs": [
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 27.5142,
-            "lng": 90.4336
-      },
-      "Indonesia": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": -6.0092,
-            "lng": 106.5373,
-            "bigScholars": {
-                  "2025": [
-                        "Kevin Adi Senjaya"
-                  ]
-            }
-      },
-      "Germany": {
-            "programs": [
-                  "BIG",
-                  "NATIONS",
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 51.1657,
-            "lng": 10.4515,
-            "bigScholars": {
-                  "2024": [
-                        "Vera Lavrova",
-                        "Dmitrii Galatenko"
-                  ],
-                  "2025": [
-                        "Tina Ding"
-                  ]
-            }
-      },
-      "Latvia": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 56.8796,
-            "lng": 24.6032
-      },
-      "T\u00fcrkiye": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 38.9637,
-            "lng": 35.2433,
-            "bigScholars": {
-                  "2024": [
-                        "Cagan Ahmet Yanmaz"
-                  ],
-                  "2025": [
-                        "Alp Terliksiz"
-                  ]
-            }
+            "lat": -22.3285,
+            "lng": 24.6849
       },
       "Bosnia and Herzegovina": {
             "programs": [
@@ -783,34 +795,13 @@
                   ]
             }
       },
-      "Albania": {
+      "Algeria": {
             "programs": [
+                  "EXCL",
                   "STAR"
             ],
-            "lat": 41.1533,
-            "lng": 20.1683
-      },
-      "Colombia": {
-            "programs": [
-                  "NATIONS"
-            ],
-            "lat": 4.5709,
-            "lng": -74.2973
-      },
-      "The Philippines": {
-            "programs": [
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": 12.8797,
-            "lng": 121.774
-      },
-      "Cameroon": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 7.3697,
-            "lng": 12.3547
+            "lat": 28.0339,
+            "lng": 1.6596
       },
       "Mauritania": {
             "programs": [
@@ -820,47 +811,6 @@
             ],
             "lat": 21.0079,
             "lng": -10.9408
-      },
-      "Netherlands": {
-            "programs": [
-                  "BIG"
-            ],
-            "bigScholars": {
-                  "2025": [
-                        "Casper Heimel"
-                  ]
-            }
-      },
-      "Dominican Republic": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 18.7357,
-            "lng": -70.1627
-      },
-      "Nepal": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 28.3949,
-            "lng": 84.124
-      },
-      "Australia": {
-            "programs": [
-                  "BIG",
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": -25.2744,
-            "lng": 133.7751,
-            "bigScholars": {
-                  "2024": [
-                        "Arthur Sun"
-                  ],
-                  "2025": [
-                        "Andy Wu"
-                  ]
-            }
       },
       "Kazakhstan": {
             "programs": [
@@ -877,40 +827,135 @@
                   ]
             }
       },
-      "China": {
+      "The Philippines": {
+            "programs": [
+                  "NATIONS",
+                  "STAR"
+            ],
+            "lat": 12.8797,
+            "lng": 121.774
+      },
+      "Dominican Republic": {
+            "programs": [
+                  "STAR"
+            ],
+            "lat": 18.7357,
+            "lng": -70.1627
+      },
+      "India": {
+            "programs": [
+                  "BIG",
+                  "STAR"
+            ],
+            "lat": 20.5937,
+            "lng": 78.9629,
+            "bigScholars": {
+                  "2024": [
+                        "Gunjan Aggarwal",
+                        "Ananda Bhaduri",
+                        "Rushil Mathur"
+                  ],
+                  "2025": [
+                        "Arjun Gupta",
+                        "Vedant Sakre",
+                        "Archit Manas"
+                  ]
+            }
+      },
+      "Serbia": {
             "programs": [
                   "BIG"
-            ]
+            ],
+            "lat": 44.0165,
+            "lng": 21.0059,
+            "bigScholars": {
+                  "2024": [
+                        "Gvozden Lapcevic"
+                  ],
+                  "2025": [
+                        "Janko Popovic",
+                        "Novak Despotovic"
+                  ]
+            }
       },
-      "United States": {
+      "Bangladesh": {
             "programs": [
+                  "STAR"
+            ],
+            "lat": 23.685,
+            "lng": 90.3563
+      },
+      "Chile": {
+            "programs": [
+                  "NATIONS"
+            ],
+            "lat": -35.6751,
+            "lng": -71.543
+      },
+      "Germany": {
+            "programs": [
+                  "BIG",
                   "NATIONS",
+                  "EXCL",
                   "STAR"
             ],
-            "lat": 39.8283,
-            "lng": -98.5795
+            "lat": 51.1657,
+            "lng": 10.4515,
+            "bigScholars": {
+                  "2024": [
+                        "Vera Lavrova",
+                        "Dmitrii Galatenko"
+                  ],
+                  "2025": [
+                        "Tina Ding"
+                  ]
+            }
       },
-      "Ivory Coast": {
+      "Guatemala": {
+            "programs": [
+                  "EXCL",
+                  "STAR"
+            ],
+            "lat": 15.7835,
+            "lng": -90.2308
+      },
+      "Latvia": {
             "programs": [
                   "STAR"
             ],
-            "lat": 7.54,
-            "lng": -5.5471
+            "lat": 56.8796,
+            "lng": 24.6032
       },
-      "Kyrgyzstan": {
+      "Armenia": {
             "programs": [
-                  "NATIONS",
+                  "BIG"
+            ],
+            "lat": 40.0691,
+            "lng": 45.0382,
+            "bigScholars": {
+                  "2025": [
+                        "Aghasi Darbinyan"
+                  ]
+            }
+      },
+      "Albania": {
+            "programs": [
                   "STAR"
             ],
-            "lat": 41.2044,
-            "lng": 74.7661
+            "lat": 41.1533,
+            "lng": 20.1683
       },
-      "Italy": {
+      "Brazil": {
             "programs": [
-                  "EXCL"
+                  "BIG"
             ],
-            "lat": 41.8719,
-            "lng": 12.5674
+            "lat": -14.235,
+            "lng": -51.9253,
+            "bigScholars": {
+                  "2024": [
+                        "Bilhana Kochloukova"
+                  ]
+            }
       },
       "Bulgaria": {
             "programs": [
@@ -929,125 +974,25 @@
                   ]
             }
       },
-      "Cyprus": {
+      "Mongolia": {
             "programs": [
                   "BIG"
             ],
-            "lat": 35.1264,
-            "lng": 33.4299,
-            "bigScholars": {
-                  "2025": [
-                        "Filippos Athos"
-                  ]
-            }
-      },
-      "Democratic Republic of the Congo": {
-            "programs": [
-                  "EXCL"
-            ],
-            "lat": -4.0383,
-            "lng": 21.7587
-      },
-      "Bangladesh": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 23.685,
-            "lng": 90.3563
-      },
-      "Ukraine": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 48.3794,
-            "lng": 31.1656,
+            "lat": 47.8864,
+            "lng": 106.9057,
             "bigScholars": {
                   "2024": [
-                        "Yevheniia Frankevych",
-                        "Volodymyr Chub",
-                        "Alisa Potomkina",
-                        "Ivan Bortnovskyi"
-                  ],
-                  "2025": [
-                        "Daniil Shvaiko",
-                        "Oles Hordiichuk",
-                        "Kseniia Drozdova",
-                        "Ihnat Zharikhin",
-                        "Viktor Lukianikhin"
+                        "Dulguun Gansukh"
                   ]
             }
       },
-      "Montenegro": {
+      "Pakistan": {
             "programs": [
+                  "NATIONS",
                   "STAR"
             ],
-            "lat": 42.7087,
-            "lng": 19.3744
-      },
-      "Cuba": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 21.5218,
-            "lng": -77.7812
-      },
-      "Northern Macedonia": {
-            "programs": [
-                  "BIG"
-            ],
-            "bigScholars": {
-                  "2025": [
-                        "Aleksij Tasikj"
-                  ]
-            }
-      },
-      "Armenia": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 40.0691,
-            "lng": 45.0382,
-            "bigScholars": {
-                  "2025": [
-                        "Aghasi Darbinyan"
-                  ]
-            }
-      },
-      "Finland": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 61.9241,
-            "lng": 25.7482,
-            "bigScholars": {
-                  "2025": [
-                        "Aino Aulanko"
-                  ]
-            }
-      },
-      "Brazil": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": -14.235,
-            "lng": -51.9253,
-            "bigScholars": {
-                  "2024": [
-                        "Bilhana Kochloukova"
-                  ]
-            }
-      },
-      "Singapore": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 1.3521,
-            "lng": 103.8198,
-            "bigScholars": {
-                  "2025": [
-                        "Xing Shen"
-                  ]
-            }
+            "lat": 30.3753,
+            "lng": 69.3451
       },
       "Poland": {
             "programs": [
@@ -1061,48 +1006,100 @@
                         "Pavlo Protsenko"
                   ]
             }
+      },
+      "Democratic Republic of the Congo": {
+            "programs": [
+                  "EXCL"
+            ],
+            "lat": -4.0383,
+            "lng": 21.7587
+      },
+      "Montenegro": {
+            "programs": [
+                  "STAR"
+            ],
+            "lat": 42.7087,
+            "lng": 19.3744
+      },
+      "Argentina": {
+            "programs": [
+                  "STAR"
+            ],
+            "lat": -38.4161,
+            "lng": -63.6167
+      },
+      "Egypt": {
+            "programs": [
+                  "EXCL",
+                  "STAR"
+            ],
+            "lat": 26.8206,
+            "lng": 30.8025
+      },
+      "Netherlands": {
+            "programs": [
+                  "BIG"
+            ],
+            "bigScholars": {
+                  "2025": [
+                        "Casper Heimel"
+                  ]
+            }
+      },
+      "Malaysia": {
+            "programs": [
+                  "NATIONS",
+                  "STAR"
+            ],
+            "lat": 4.2105,
+            "lng": 101.9758
+      },
+      "Spain/Brazil": {
+            "programs": [
+                  "BIG"
+            ],
+            "bigScholars": {
+                  "2025": [
+                        "Ruben Mason Carpenter"
+                  ]
+            }
       }
 };
 
         // Country website mappings for click navigation
-    let countryWebsites = {};
 
-    // Load country links from CSV
-    async function loadCountryLinks() {
-      try {
-        const response = await fetch('data/country_links.csv');
-        const csvText = await response.text();
-        const lines = csvText.split('\n');
-        
-        // Skip header row
-        for (let i = 1; i < lines.length; i++) {
-          const line = lines[i].trim();
-          if (line) {
-            // Simple CSV parsing - assumes no commas in values
-            const [country, url, linkType, active, notes] = line.split(',').map(s => s.replace(/"/g, ''));
-            
-            if (active === 'Yes' && url && url.startsWith('http')) {
-              countryWebsites[country] = url;
-            }
-          }
-        }
-        console.log(`Loaded ${Object.keys(countryWebsites).length} country links from CSV`);
-      } catch (err) {
-        console.warn('Failed to load country links CSV:', err);
-        // Fallback - keep some essential globtalent.org links
-        countryWebsites = {
-          "United Kingdom": "https://www.globtalent.org/country-collection/united-kingdom",
-          "Australia": "https://www.globtalent.org/country-collection/australia",
-          "India": "https://www.globtalent.org/country-collection/india",
-          "Romania": "https://www.globtalent.org/country-collection/romania",
-          "Ukraine": "https://www.globtalent.org/country-collection/ukraine",
-          "Germany": "https://www.globtalent.org/country-collection/germany"
-        };
-      }
+      let countryWebsites = {
+            "Australia": "https://www.globtalent.org/countries/australia",
+            "Bhutan": "https://www.globtalent.org/countries/bhutan",
+            "Bolivia": "https://www.globtalent.org/countries/latin-america",
+            "Bosnia and Herzegovina": "https://www.globtalent.org/countries/bosnia-and-herzegovina",
+            "Brazil": "https://www.globtalent.org/countries/brazil",
+            "Bulgaria": "https://www.globtalent.org/countries/bulgaria",
+            "Costa Rica": "https://www.globtalent.org/countries/costa-rica",
+            "El Salvador": "https://www.globtalent.org/countries/el-salvador",
+            "Georgia": "https://www.globtalent.org/countries/georgia",
+            "Germany": "https://www.globtalent.org/countries/germany",
+            "Hungary": "https://www.globtalent.org/countries/hungary",
+            "India": "https://www.globtalent.org/countries/india",
+            "Indonesia": "https://www.globtalent.org/countries/indonesia",
+            "Mexico": "https://www.globtalent.org/countries/latin-america",
+            "Mongolia": "https://www.globtalent.org/countries/mongolia",
+            "Philippines": "https://www.globtalent.org/countries/philippines",
+            "Romania": "https://www.globtalent.org/countries/romania",
+            "Rwanda": "https://www.globtalent.org/countries/rwanda",
+            "Serbia": "https://www.globtalent.org/countries/serbia",
+            "Turkey": "https://www.globtalent.org/countries/turkey",
+            "Ukraine": "https://www.globtalent.org/countries/ukraine",
+            "United Kingdom": "https://www.globtalent.org/countries/united-kingdom",
+            "Finland": "https://www.globtalent.org/countries/finland",
+            "Iran": "https://www.globtalent.org/countries/iran",
+            "France": "https://www.globtalent.org/countries/france",
+            "Kazakhstan": "https://www.globtalent.org/countries/kazakhstan",
+            "North Macedonia": "https://www.globtalent.org/countries/north-macedonia",
+            "Belarus": "https://www.globtalent.org/countries/belarus",
+            "Cyprus": "https://www.globtalent.org/countries/cyprus",
+            "Hong Kong, China": "https://www.globtalent.org/countries/hong-kong-china"
     }
-
-    // Load links when page loads
-    loadCountryLinks();
 
     /* Legend toggle */
     function toggleLegend(){
@@ -1244,7 +1241,7 @@
           center: mapCenter,
           zoom: 3.2,
           minZoom: 2.8,
-          maxZoom: 8,
+          maxZoom: 4,
           extent: WORLD_EXTENT,
           showFullExtent: true
         })
@@ -1253,7 +1250,7 @@
     // Fit to world extent with constraints to prevent empty space
     map.getView().fit(WORLD_EXTENT, { 
       size: map.getSize(), 
-      padding: [50, 50, 50, 50],
+      padding: [200, 50, 50, 50],
       minResolution: map.getView().getResolutionForZoom(2.8),
       maxZoom: 4.0 
     });
@@ -1325,13 +1322,13 @@
 
             // --- Add a custom line for the UK and France ---
             if (country === 'United Kingdom' || country == 'France') {
-                  extraText = `<div style="margin-top:6px; font-size:13px; color:var(--light-navy);">
+                  extraText = `<div style="margin-bottom:6px; font-size:13px;">
                   Host country for the BIG Program
                   </div>`;
             }
             tooltip.innerHTML = `
               <div class="popup-title">${country}</div>
-              ${chips}${extraText}${bigSection}`;
+              ${extraText}${chips}${bigSection}`;
             tooltip.style.display = 'block';
             
             // Position tooltip relative to mouse event
