@@ -15,6 +15,7 @@ from pathlib import Path
 
 # Country coordinates mapping (approximate center points)
 COUNTRY_COORDINATES = {
+    "Latin America & Ibero-America": {"lat": 13.4099, "lng": -78.6099},
     "United States": {"lat": 39.8283, "lng": -98.5795},
     "Canada": {"lat": 56.1304, "lng": -106.3468},
     "Brazil": {"lat": -14.2350, "lng": -51.9253},
@@ -194,6 +195,7 @@ def generate_program_data():
     
     # Default program assignments (you may want to make this configurable)
     default_programs = {
+        "Latin America & Ibero-America": [],
         "United States": ["NATIONS", "STAR"],
         "Canada": ["NATIONS", "STAR"],
         "United Kingdom": ["BIG", "EXCL", "STAR"],
@@ -212,7 +214,7 @@ def generate_program_data():
         "Argentina": ["STAR"],
         "Colombia": ["NATIONS"],
         "Egypt": ["EXCL", "STAR"],
-        "Kazakhstan": ["NATIONS"],
+        "Kazakhstan": ["BIG","NATIONS"],
         "The Philippines": ["NATIONS", "STAR"],
         "Georgia": ["NATIONS", "STAR"],
         "Bhutan": ["EXCL", "STAR"],
@@ -244,7 +246,8 @@ def generate_program_data():
         "Nepal": ["STAR"],
         "Nicaragua": ["EXCL", "STAR"],
         "Pakistan": ["NATIONS", "STAR"],
-        "West Bank and Gaza": ["STAR"]
+        "West Bank and Gaza": ["STAR"],
+        "Finland": ["BIG"]
     }
     
     # Get all countries that have data
@@ -260,8 +263,8 @@ def generate_program_data():
             country_data["programs"] = default_programs[country]
         elif country in big_scholars:
             country_data["programs"] = ["BIG"]
-        else:
-            country_data["programs"] = ["STAR"]  # Default program
+        # else:
+        #    country_data["programs"] = ["STAR"]  # Default program
         
         # Add coordinates
         if country in COUNTRY_COORDINATES:
