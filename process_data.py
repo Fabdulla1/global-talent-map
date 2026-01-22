@@ -136,53 +136,22 @@ def normalize_country_name(country):
     return name_mapping.get(country, country)
 
 def load_csv_data():
-    """Load and process CSV data files"""
-    data_dir = Path("data")
-    
-    # Load BIG scholars data
+    """Load and process BIG scholars data from Excel (clean dataset)."""
+    df = pd.read_excel(Path("data") / "GTF BIG Talent Scholars.xlsx")
+
     big_scholars = {}
-    
-    # Process 2024 data
-    big_2024_file = data_dir / "BIG_scholars_2024_entry.csv"
-    if big_2024_file.exists():
-        df_2024 = pd.read_csv(big_2024_file)
-        print(f"Processing 2024 data: {len(df_2024)} rows")
-        for _, row in df_2024.iterrows():
-            country = normalize_country_name(row['Country'])
-            name = row['Name']
-            if pd.notna(country) and pd.notna(name):  # Skip empty rows
-                if country not in big_scholars:
-                    big_scholars[country] = {}
-                if '2024' not in big_scholars[country]:
-                    big_scholars[country]['2024'] = []
-                big_scholars[country]['2024'].append(name)
-    
-    # Process 2025 data - this has a complex header structure
-    big_2025_file = data_dir / "Big_scholars_list_2025.csv"
-    if big_2025_file.exists():
-        # Read with header=1 to skip the first row which is a multi-header
-        df_2025 = pd.read_csv(big_2025_file, header=1)
-        print(f"Processing 2025 data: {len(df_2025)} rows")
-        
-        # The columns should now be: Email, Name, Country, Gender, etc.
-        for _, row in df_2025.iterrows():
-            # Skip rows where essential data is missing
-            if pd.isna(row.get('Country')) or pd.isna(row.get('Name')):
-                continue
-                
-            country = normalize_country_name(row['Country'])
-            name = row['Name']
-            
-            # Skip rows with placeholder data
-            if 'Do not contact' in str(name) or name == 'Name':
-                continue
-                
-            if country not in big_scholars:
-                big_scholars[country] = {}
-            if '2025' not in big_scholars[country]:
-                big_scholars[country]['2025'] = []
-            big_scholars[country]['2025'].append(name)
-    
+    for _, row in df.iterrows():
+        country = normalize_country_name(row["Country"])
+        year = str(row["Year"])
+        name = row["Name"]
+
+        if country not in big_scholars:
+            big_scholars[country] = {}
+        if year not in big_scholars[country]:
+            big_scholars[country][year] = []
+
+        big_scholars[country][year].append(name)
+
     return big_scholars
 
 def generate_program_data():
