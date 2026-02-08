@@ -16,7 +16,7 @@ from pathlib import Path
 # Country coordinates mapping (approximate center points)
 COUNTRY_COORDINATES = {
     "Latin America & Ibero-America": {"lat": 13.4099, "lng": -78.6099},
-    "United States": {"lat": 39.8283, "lng": -98.5795},
+    "United States of America": {"lat": 39.8283, "lng": -98.5795},
     "Canada": {"lat": 56.1304, "lng": -106.3468},
     "Brazil": {"lat": -14.2350, "lng": -51.9253},
     "United Kingdom": {"lat": 55.3781, "lng": -3.4360},
@@ -30,7 +30,7 @@ COUNTRY_COORDINATES = {
     "South Africa": {"lat": -30.5595, "lng": 22.9375},
     "Kenya": {"lat": -0.0236, "lng": 37.9062},
     "Italy": {"lat": 41.8719, "lng": 12.5674},
-    "Russia": {"lat": 61.5240, "lng": 105.3188},
+    "Russian Federation": {"lat": 61.5240, "lng": 105.3188},
     "Mexico": {"lat": 23.6345, "lng": -102.5528},
     "Argentina": {"lat": -38.4161, "lng": -63.6167},
     "Colombia": {"lat": 4.5709, "lng": -74.2973},
@@ -127,15 +127,12 @@ COUNTRY_COORDINATES = {
 def normalize_country_name(country):
     """Normalize country names to match the standard format"""
     name_mapping = {
-        "Bosnia": "Bosnia and Herzegovina",
-        "Eswatini": "Eswatini",
-        "UK": "United Kingdom",
         "Turkey": "Türkiye"
-        # Add more mappings as needed
+        # Will add more mappings if needed
     }
     return name_mapping.get(country, country)
 
-def load_csv_data():
+def load_bigscholars_data():
     """Load and process BIG scholars data from Excel (clean dataset)."""
     df = pd.read_excel(Path("data") / "GTF BIG Talent Scholars.xlsx")
 
@@ -154,88 +151,52 @@ def load_csv_data():
 
     return big_scholars
 
+def load_program_data():
+    """
+    Load the program data file, containing the countries and the respective programs they are enrolled in.
+    """
+    df = pd.read_excel(Path("data") / "Program Data.xlsx")
+
+    gtf_programs = {}
+
+    for _, row in df.iterrows():
+        country = normalize_country_name(row["Country"])
+        gtf_programs[country] = []
+        if row["NATIONS"] == 1:
+            gtf_programs[country].append("NATIONS")
+        if row["EXCL"] == 1:
+            gtf_programs[country].append("EXCL")
+        if row["STAR"] == 1:
+            gtf_programs[country].append("STAR")
+
+    return gtf_programs
+
 def generate_program_data():
     """Generate the program data structure"""
-    big_scholars = load_csv_data()
-    
-    # Base program data - this would need to be expanded based on your full requirements
-    # For now, I'm including the countries that have BIG scholars and some default programs
+    big_scholars = load_bigscholars_data()
+    gtf_programs = load_program_data()
+
     program_data = {}
-    
-    # Default program assignments (you may want to make this configurable)
-    default_programs = {
-        "Latin America & Ibero-America": [],
-        "United States": ["NATIONS", "STAR"],
-        "Canada": ["NATIONS", "STAR"],
-        "United Kingdom": ["BIG", "EXCL", "STAR"],
-        "Germany": ["BIG", "NATIONS", "EXCL", "STAR"],
-        "France": ["BIG", "NATIONS"],
-        "India": ["BIG", "STAR"],
-        "China": ["BIG"],
-        "Japan": ["NATIONS", "STAR"],
-        "Australia": ["BIG", "NATIONS", "STAR"],
-        "Nigeria": ["NATIONS", "EXCL", "STAR"],
-        "South Africa": ["NATIONS", "STAR"],
-        "Kenya": ["EXCL", "STAR"],
-        "Italy": ["EXCL"],
-        "Russia": ["NATIONS", "EXCL"],
-        "Mexico": ["NATIONS"],
-        "Argentina": ["STAR"],
-        "Colombia": ["NATIONS"],
-        "Egypt": ["EXCL", "STAR"],
-        "Kazakhstan": ["BIG","NATIONS"],
-        "The Philippines": ["NATIONS", "STAR"],
-        "Georgia": ["NATIONS", "STAR"],
-        "Bhutan": ["EXCL", "STAR"],
-        "Rwanda": ["NATIONS", "EXCL", "STAR"],
-        "Albania": ["STAR"],
-        "Algeria": ["EXCL", "STAR"],
-        "Bangladesh": ["STAR"],
-        "Bolivia": ["STAR"],
-        "Botswana": ["NATIONS", "STAR"],
-        "Cameroon": ["STAR"],
-        "Chile": ["NATIONS"],
-        "Cuba": ["STAR"],
-        "Czech Republic": ["STAR"],
-        "Democratic Republic of the Congo": ["EXCL"],
-        "Dominican Republic": ["STAR"],
-        "Ethiopia": ["NATIONS", "STAR"],
-        "Guatemala": ["EXCL", "STAR"],
-        "Ivory Coast": ["STAR"],
-        "Jordan": ["NATIONS", "STAR"],
-        "Kyrgyzstan": ["NATIONS", "STAR"],
-        "Latvia": ["STAR"],
-        "Lesotho": ["STAR"],
-        "Lithuania": ["NATIONS", "STAR"],
-        "Malaysia": ["NATIONS", "STAR"],
-        "Mauritania": ["NATIONS", "EXCL", "STAR"],
-        "Montenegro": ["STAR"],
-        "Morocco": ["NATIONS", "EXCL", "STAR"],
-        "Namibia": ["NATIONS"],
-        "Nepal": ["STAR"],
-        "Nicaragua": ["EXCL", "STAR"],
-        "Pakistan": ["NATIONS", "STAR"],
-        "West Bank and Gaza": ["STAR"],
-        "Finland": ["BIG"]
-    }
     
     # Get all countries that have data
     all_countries = set()
     all_countries.update(big_scholars.keys())
-    all_countries.update(default_programs.keys())
+    all_countries.update(gtf_programs.keys())
     
     for country in all_countries:
-        country_data = {}
+        country_data = {"programs":[]}
         
         # Add programs
-        if country in default_programs:
-            country_data["programs"] = default_programs[country]
-        elif country in big_scholars:
-            country_data["programs"] = ["BIG"]
-        # else:
-        #    country_data["programs"] = ["STAR"]  # Default program
+
+        if country in big_scholars:
+            country_data["programs"].append("BIG")
+        if country in gtf_programs:
+            country_data["programs"].extend(gtf_programs[country])
         
         # Add coordinates
+
+        # assert country in COUNTRY_COORDINATES, f"{country} coordinates not found"
+
         if country in COUNTRY_COORDINATES:
             country_data["lat"] = COUNTRY_COORDINATES[country]["lat"]
             country_data["lng"] = COUNTRY_COORDINATES[country]["lng"]
@@ -248,61 +209,30 @@ def generate_program_data():
     
     return program_data
 
-def update_html_file():
-    """Update the HTML file with new data"""
-    html_file = Path("index.html")
-    
-    if not html_file.exists():
-        print("Error: index.html not found")
-        return
-    
-    # Generate new program data
+def write_program_data_json(output_path=Path("data") / "programData.json"):
+    """Write programData.json into /data/programData.json"""
     program_data = generate_program_data()
-    
-    # Read the HTML file
-    with open(html_file, 'r', encoding='utf-8') as f:
-        content = f.read()
-    
-    # Convert program data to JavaScript format
-    js_data = "    const programData = " + json.dumps(program_data, indent=6) + ";"
-    
-    # Find and replace the programData section
-    start_marker = "    /* ---------- DATA: keep exactly as-is from your app ---------- */"
-    end_marker = "    // Country website mappings for click navigation"
-    
-    start_idx = content.find(start_marker)
-    end_idx = content.find(end_marker)
-    
-    if start_idx == -1 or end_idx == -1:
-        print("Error: Could not find data section markers in HTML file")
-        return
-    
-    # Replace the data section
-    new_content = (
-        content[:start_idx] + 
-        start_marker + "\n" + 
-        js_data + "\n\n    " +
-        content[end_idx:]
-    )
-    
-    # Write back to file
-    with open(html_file, 'w', encoding='utf-8') as f:
-        f.write(new_content)
-    
-    print("✅ Successfully updated index.html with new data")
+
+    print(program_data.get("Russian Federation", "Russia not found"))
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(program_data, f, ensure_ascii=False, indent=2)
+
+    print(f"✅ Wrote {output_path.as_posix()}")
     print(f"📊 Generated data for {len(program_data)} countries")
 
 def main():
     """Main function"""
     print("🚀 Starting data processing...")
-    
-    # Check if we're in the right directory
+
     if not Path("data").exists():
         print("Error: 'data' directory not found. Please run this script from the project root.")
         return
-    
+
     try:
-        update_html_file()
+        write_program_data_json()
         print("✨ Data processing completed successfully!")
     except Exception as e:
         print(f"❌ Error during processing: {e}")

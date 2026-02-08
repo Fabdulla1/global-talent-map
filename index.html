@@ -294,798 +294,18 @@
       </div>
     </div>
 <script>
-    /* ---------- DATA: keep exactly as-is from your app ---------- */
-    const programData = {
-      "Netherlands": {
-            "programs": [
-                  "BIG"
-            ],
-            "bigScholars": {
-                  "2025": [
-                        "Casper Heimel"
-                  ]
-            }
-      },
-      "Hong Kong, China": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 22.7919,
-            "lng": 114.7157,
-            "bigScholars": {
-                  "2024": [
-                        "Clement Hui"
-                  ],
-                  "2025": [
-                        "Hanks Chong"
-                  ]
-            }
-      },
-      "Cyprus": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 35.1264,
-            "lng": 33.4299,
-            "bigScholars": {
-                  "2025": [
-                        "Filippos Athos Chatzichristofi"
-                  ]
-            }
-      },
-      "Czech Republic": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 49.8175,
-            "lng": 15.473,
-            "bigScholars": {
-                  "2025": [
-                        "Martin Kudrna"
-                  ]
-            }
-      },
-      "Jordan": {
-            "programs": [
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": 30.5852,
-            "lng": 36.2384
-      },
-      "China": {
-            "programs": [
-                  "BIG"
-            ]
-      },
-      "North Macedonia": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 41.6086,
-            "lng": 21.7453,
-            "bigScholars": {
-                  "2025": [
-                        "Aleksij Tasikj"
-                  ]
-            }
-      },
-      "Kyrgyzstan": {
-            "programs": [
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": 41.2044,
-            "lng": 74.7661
-      },
-      "Lithuania": {
-            "programs": [
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": 55.1694,
-            "lng": 23.8813
-      },
-      "West Bank and Gaza": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 31.9522,
-            "lng": 35.2332
-      },
-      "Kazakhstan": {
-            "programs": [
-                  "BIG",
-                  "NATIONS"
-            ],
-            "lat": 48.0196,
-            "lng": 66.9237,
-            "bigScholars": {
-                  "2025": [
-                        "Amir Pshenbayev",
-                        "Miron Yurkevich",
-                        "Nazar Serazitdinov",
-                        "Vladimir Rogovskiy"
-                  ]
-            }
-      },
-      "Cameroon": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 7.3697,
-            "lng": 12.3547
-      },
-      "Japan": {
-            "programs": [
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": 36.2048,
-            "lng": 138.2529
-      },
-      "Nigeria": {
-            "programs": [
-                  "NATIONS",
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 9.082,
-            "lng": 8.6753
-      },
-      "Hungary": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 47.1625,
-            "lng": 19.5033,
-            "bigScholars": {
-                  "2024": [
-                        "Laszlo Bence Simon"
-                  ],
-                  "2025": [
-                        "Istvan Adam Molnar",
-                        "Pal Czanik"
-                  ]
-            }
-      },
-      "Botswana": {
-            "programs": [
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": -22.3285,
-            "lng": 24.6849
-      },
-      "Poland": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 51.9194,
-            "lng": 19.1451,
-            "bigScholars": {
-                  "2025": [
-                        "Magdalena Pudelko",
-                        "Mateusz Wawrzyniak"
-                  ]
-            }
-      },
-      "Albania": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 41.1533,
-            "lng": 20.1683
-      },
-      "Bosnia and Herzegovina": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 43.9159,
-            "lng": 17.6791,
-            "bigScholars": {
-                  "2024": [
-                        "Asja Catic",
-                        "Ilma Celjo",
-                        "Naida Gavranovic",
-                        "Emina Hasanbegovic",
-                        "Ervin Macic"
-                  ],
-                  "2025": [
-                        "Faruk Ibrahimovic"
-                  ]
-            }
-      },
-      "Cuba": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 21.5218,
-            "lng": -77.7812
-      },
-      "Ethiopia": {
-            "programs": [
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": 9.145,
-            "lng": 40.4897
-      },
-      "Guatemala": {
-            "programs": [
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 15.7835,
-            "lng": -90.2308
-      },
-      "Pakistan": {
-            "programs": [
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": 30.3753,
-            "lng": 69.3451
-      },
-      "Morocco": {
-            "programs": [
-                  "NATIONS",
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 31.7917,
-            "lng": -7.0926
-      },
-      "Colombia": {
-            "programs": [
-                  "NATIONS"
-            ],
-            "lat": 4.5709,
-            "lng": -74.2973
-      },
-      "Brazil": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": -14.235,
-            "lng": -51.9253,
-            "bigScholars": {
-                  "2024": [
-                        "Bilhana Kochloukova"
-                  ],
-                  "2025": [
-                        "Leonardo Henrique Fakhreddine Maldonado"
-                  ]
-            }
-      },
-      "Ukraine": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 48.3794,
-            "lng": 31.1656,
-            "bigScholars": {
-                  "2024": [
-                        "Ivan Bortnovskyi",
-                        "Volodymyr Chub",
-                        "Yevheniia Frankevych",
-                        "Alisa Potomkina"
-                  ],
-                  "2025": [
-                        "Stepan Semyrenskyi",
-                        "Oles Hordiichuk",
-                        "Daniil Shvaiko",
-                        "Ihnat Zharikhin",
-                        "Kseniia Drozdova"
-                  ]
-            }
-      },
-      "Indonesia": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": -6.0092,
-            "lng": 106.5373,
-            "bigScholars": {
-                  "2025": [
-                        "Kevin Adi Senjaya"
-                  ]
-            }
-      },
-      "Latvia": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 56.8796,
-            "lng": 24.6032
-      },
-      "Bhutan": {
-            "programs": [
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 27.5142,
-            "lng": 90.4336
-      },
-      "Croatia": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 45.1,
-            "lng": 15.2,
-            "bigScholars": {
-                  "2025": [
-                        "Val Karan"
-                  ]
-            }
-      },
-      "Latin America & Ibero-America": {
-            "programs": [],
-            "lat": 13.4099,
-            "lng": -78.6099
-      },
-      "Greece": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 39.0742,
-            "lng": 21.8243,
-            "bigScholars": {
-                  "2025": [
-                        "Sokratis Iliadis"
-                  ]
-            }
-      },
-      "Singapore": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 1.3521,
-            "lng": 103.8198,
-            "bigScholars": {
-                  "2025": [
-                        "Xing Yang Shen"
-                  ]
-            }
-      },
-      "Georgia": {
-            "programs": [
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": 42.3154,
-            "lng": 43.3569
-      },
-      "Algeria": {
-            "programs": [
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 28.0339,
-            "lng": 1.6596
-      },
-      "Bangladesh": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 23.685,
-            "lng": 90.3563
-      },
-      "United States": {
-            "programs": [
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": 39.8283,
-            "lng": -98.5795
-      },
-      "Canada": {
-            "programs": [
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": 56.1304,
-            "lng": -106.3468
-      },
-      "Italy": {
-            "programs": [
-                  "EXCL"
-            ],
-            "lat": 41.8719,
-            "lng": 12.5674
-      },
-      "Mongolia": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 47.8864,
-            "lng": 106.9057,
-            "bigScholars": {
-                  "2024": [
-                        "Dulguun Gansukh"
-                  ]
-            }
-      },
-      "Lesotho": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": -29.61,
-            "lng": 28.2336
-      },
-      "Nicaragua": {
-            "programs": [
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 12.2651,
-            "lng": -85.2072
-      },
-      "Kenya": {
-            "programs": [
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": -0.0236,
-            "lng": 37.9062
-      },
-      "Ivory Coast": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 7.54,
-            "lng": -5.5471
-      },
-      "Montenegro": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 42.7087,
-            "lng": 19.3744
-      },
-      "Nepal": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 28.3949,
-            "lng": 84.124
-      },
-      "Finland": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 61.9241,
-            "lng": 25.7482,
-            "bigScholars": {
-                  "2025": [
-                        "Aino Aulanko"
-                  ]
-            }
-      },
-      "Germany": {
-            "programs": [
-                  "BIG",
-                  "NATIONS",
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 51.1657,
-            "lng": 10.4515,
-            "bigScholars": {
-                  "2024": [
-                        "Dmitrii Galatenko",
-                        "Vera Lavrova"
-                  ],
-                  "2025": [
-                        "Tina Ding"
-                  ]
-            }
-      },
-      "Belarus": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 53.7098,
-            "lng": 27.9534,
-            "bigScholars": {
-                  "2025": [
-                        "Mikhail Raikhman"
-                  ]
-            }
-      },
-      "Argentina": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": -38.4161,
-            "lng": -63.6167
-      },
-      "The Philippines": {
-            "programs": [
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": 12.8797,
-            "lng": 121.774
-      },
-      "Costa Rica": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 9.7489,
-            "lng": -83.7534,
-            "bigScholars": {
-                  "2024": [
-                        "Gabriel Najmias"
-                  ]
-            }
-      },
-      "Chile": {
-            "programs": [
-                  "NATIONS"
-            ],
-            "lat": -35.6751,
-            "lng": -71.543
-      },
-      "France": {
-            "programs": [
-                  "BIG",
-                  "NATIONS"
-            ],
-            "lat": 46.2276,
-            "lng": 2.2137
-      },
-      "Russia": {
-            "programs": [
-                  "NATIONS",
-                  "EXCL"
-            ],
-            "lat": 61.524,
-            "lng": 105.3188
-      },
-      "South Africa": {
-            "programs": [
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": -30.5595,
-            "lng": 22.9375
-      },
-      "Romania": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 45.9432,
-            "lng": 24.9668,
-            "bigScholars": {
-                  "2024": [
-                        "Andrei Chirita",
-                        "Alexandru Momoiu",
-                        "Vlad-Titus Spataru",
-                        "Mara Ioana Zaharia"
-                  ],
-                  "2025": [
-                        "Pavel Ciurea"
-                  ]
-            }
-      },
-      "Malaysia": {
-            "programs": [
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": 4.2105,
-            "lng": 101.9758
-      },
-      "Serbia": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 44.0165,
-            "lng": 21.0059,
-            "bigScholars": {
-                  "2024": [
-                        "Gvozden Lapcevic"
-                  ],
-                  "2025": [
-                        "Janko Popovic",
-                        "Novak Despotovic",
-                        "Vladimir Brankovic",
-                        "Neda Zivanovic"
-                  ]
-            }
-      },
-      "United Kingdom": {
-            "programs": [
-                  "BIG",
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 55.3781,
-            "lng": -3.436,
-            "bigScholars": {
-                  "2024": [
-                        "Sida Li",
-                        "Huyen Ngoc Pham"
-                  ],
-                  "2025": [
-                        "Emily Wong",
-                        "William Harwood",
-                        "Zijie Guan"
-                  ]
-            }
-      },
-      "Iran": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 32.4279,
-            "lng": 53.688,
-            "bigScholars": {
-                  "2025": [
-                        "Parsa Saberi"
-                  ]
-            }
-      },
-      "Democratic Republic of the Congo": {
-            "programs": [
-                  "EXCL"
-            ],
-            "lat": -4.0383,
-            "lng": 21.7587
-      },
-      "India": {
-            "programs": [
-                  "BIG",
-                  "STAR"
-            ],
-            "lat": 20.5937,
-            "lng": 78.9629,
-            "bigScholars": {
-                  "2024": [
-                        "Gunjan Aggarwal",
-                        "Ananda Bhaduri",
-                        "Rushil Mathur"
-                  ],
-                  "2025": [
-                        "Archit Manas",
-                        "Arjun Gupta",
-                        "Aadish Jain",
-                        "Vedant Sakre"
-                  ]
-            }
-      },
-      "Egypt": {
-            "programs": [
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 26.8206,
-            "lng": 30.8025
-      },
-      "Dominican Republic": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": 18.7357,
-            "lng": -70.1627
-      },
-      "Bulgaria": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 42.7339,
-            "lng": 25.4858,
-            "bigScholars": {
-                  "2024": [
-                        "Victor Lilov"
-                  ],
-                  "2025": [
-                        "Yunxin Hu",
-                        "Boris Mihov",
-                        "Aleksandar Gatev"
-                  ]
-            }
-      },
-      "T\u00fcrkiye": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 38.9637,
-            "lng": 35.2433,
-            "bigScholars": {
-                  "2024": [
-                        "Cagan Ahmet Yanmaz"
-                  ],
-                  "2025": [
-                        "Deniz Can Karacelebi",
-                        "Alp Terliksiz"
-                  ]
-            }
-      },
-      "El Salvador": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 13.7942,
-            "lng": -88.8965,
-            "bigScholars": {
-                  "2024": [
-                        "Manuel Cabrera"
-                  ]
-            }
-      },
-      "Bolivia": {
-            "programs": [
-                  "STAR"
-            ],
-            "lat": -16.2902,
-            "lng": -63.5887
-      },
-      "Australia": {
-            "programs": [
-                  "BIG",
-                  "NATIONS",
-                  "STAR"
-            ],
-            "lat": -25.2744,
-            "lng": 133.7751,
-            "bigScholars": {
-                  "2024": [
-                        "Arthur Sun"
-                  ],
-                  "2025": [
-                        "Andy Wu"
-                  ]
-            }
-      },
-      "Mauritania": {
-            "programs": [
-                  "NATIONS",
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": 21.0079,
-            "lng": -10.9408
-      },
-      "Namibia": {
-            "programs": [
-                  "NATIONS"
-            ],
-            "lat": -22.9576,
-            "lng": 18.4904
-      },
-      "Tunisia": {
-            "programs": [
-                  "BIG"
-            ],
-            "lat": 33.8869,
-            "lng": 9.5375,
-            "bigScholars": {
-                  "2025": [
-                        "Mohamed Yassine Chebil"
-                  ]
-            }
-      },
-      "Mexico": {
-            "programs": [
-                  "NATIONS"
-            ],
-            "lat": 23.6345,
-            "lng": -102.5528
-      },
-      "Rwanda": {
-            "programs": [
-                  "NATIONS",
-                  "EXCL",
-                  "STAR"
-            ],
-            "lat": -1.9403,
-            "lng": 29.8739
-      }
-};
 
-// Country website mappings for click navigation
+      // Load programData.json
+
+      let programData = {}; // se llenará desde /data/programData.json
+
+      async function loadProgramData() {
+            const res = await fetch("./data/programData.json", { cache: "no-store" });
+            if (!res.ok) throw new Error(`Failed to load programData.json (${res.status})`);
+            programData = await res.json();
+}
+
+      // Country website mappings for click navigation
 
       let countryWebsites = {
             "Australia": "https://www.globtalent.org/countries/australia",
@@ -1132,98 +352,108 @@
 </script>
 
 <script>
-  window.addEventListener("load", () => {
-    // -----------------------------
-    // 1) Projection (simple + explicit)
-    // -----------------------------
-    const PROJ_CODE = "CUSTOM:ROBIN";
-    proj4.defs(PROJ_CODE, "+proj=robin +datum=WGS84 +units=m +no_defs");
-    ol.proj.proj4.register(proj4);
+  window.addEventListener("load", async () => {
 
-    const WORLD_EXTENT = [-18000000, -8500000, 18000000, 8500000];
-    const projection = ol.proj.get(PROJ_CODE);
-    projection.setExtent(WORLD_EXTENT);
+      // Load programData first
 
-    // -----------------------------
-    // 2) Program labels (single source of truth)
-    // -----------------------------
-    const PROGRAM_LABELS = {
-      BIG: "GTF BIG Talent Scholars",
-      NATIONS: "GTF Olympiad Grants",
-      EXCL: "GTF Coaches",
-      STAR: "GTF STARs",
-    };
-
-    const programLabel = (code) => PROGRAM_LABELS[code] || code;
-
-    // -----------------------------
-    // 3) Helpers
-    // -----------------------------
-    function levelFromPrograms(programs) {
-      const n = programs.length;
-      if (n >= 3) return "elite";
-      if (n === 2) return "high";
-      if (n === 1) return "active";
-      return "special";
-    }
-
-    function levelColor(level) {
-      switch (level) {
-        case "elite": return "#0F172A";
-        case "high": return "#1E40AF";
-        case "active": return "#3B82F6";
-        case "special": return "#C2B11B";
-        default: return "#AAB8C2";
+      try {
+            await loadProgramData();
+      } catch (e) {
+            console.error(e);
       }
-    }
 
-    function responsiveViewParams() {
-      // Ajusta aquí, pero sin “magia” extra
-      if (window.innerWidth <= 768) {
-        return { centerLonLat: [10, 50], zoom: 2.7, padding: [120, 30, 30, 30] };
+      // -----------------------------
+      // 1) Projection (simple + explicit)
+      // -----------------------------
+      const PROJ_CODE = "CUSTOM:ROBIN";
+      proj4.defs(PROJ_CODE, "+proj=robin +datum=WGS84 +units=m +no_defs");
+      ol.proj.proj4.register(proj4);
+
+      const WORLD_EXTENT = [-18000000, -8500000, 18000000, 8500000];
+      const projection = ol.proj.get(PROJ_CODE);
+      projection.setExtent(WORLD_EXTENT);
+
+      // -----------------------------
+      // 2) Program labels (single source of truth)
+      // -----------------------------
+      const PROGRAM_LABELS = {
+            BIG: "GTF BIG Talent Scholars",
+            NATIONS: "GTF Olympiad Grants",
+            EXCL: "GTF Coaches",
+            STAR: "GTF STARs",
+      };
+
+      const programLabel = (code) => PROGRAM_LABELS[code] || code;
+
+      // -----------------------------
+      // 3) Helpers
+      // -----------------------------
+      function levelFromPrograms(programs) {
+            const n = programs.length;
+            if (n >= 3) return "elite";
+            if (n === 2) return "high";
+            if (n === 1) return "active";
+            return "special";
       }
-      return { centerLonLat: [0, 5], zoom: 2.9, padding: [200, 60, 40, 60] };
-    }
 
-    function makeTooltipEl() {
-      const el = document.createElement("div");
-      el.className = "hover-tooltip";
-      el.style.display = "none";
-      document.body.appendChild(el);
-      return el;
-    }
+      function levelColor(level) {
+            switch (level) {
+                  case "elite": return "#0F172A";
+                  case "high": return "#1E40AF";
+                  case "active": return "#3B82F6";
+                  case "special": return "#C2B11B";
+                  default: return "#AAB8C2";
+            }
+      }
 
-    function setTooltipPosition(tooltipEl, mapTargetEl, pixel) {
-      const rect = mapTargetEl.getBoundingClientRect();
-      const x = rect.left + pixel[0];
-      const y = rect.top + pixel[1];
+      function responsiveViewParams() {
+            // Ajusta aquí, pero sin “magia” extra
+            if (window.innerWidth <= 768) {
+                  return { centerLonLat: [10, 50], zoom: 2.7, padding: [120, 30, 30, 30] };
+            }
+            return { centerLonLat: [0, 5], zoom: 2.9, padding: [200, 60, 40, 60] };
+      }
 
-      const isNearTop = y < window.innerHeight * 0.3;
-      tooltipEl.className = isNearTop ? "hover-tooltip below" : "hover-tooltip above";
-      tooltipEl.style.left = x + "px";
-      tooltipEl.style.top = y + "px";
-    }
+      function makeTooltipEl() {
+            const el = document.createElement("div");
+            el.className = "hover-tooltip";
+            el.style.display = "none";
+            document.body.appendChild(el);
+            return el;
+      }
 
-    function tooltipHTML(country, programs, bigScholars) {
-      const chips = programs.length
-        ? `<div class="popup-programs">${
-            programs
-              .map((code) => `<span class="popup-program ${code.toLowerCase()}">${programLabel(code)}</span>`)
-              .join("")
-          }</div>`
-        : "";
+      function setTooltipPosition(tooltipEl, mapTargetEl, pixel) {
+            const rect = mapTargetEl.getBoundingClientRect();
+            const x = rect.left + pixel[0];
+            const y = rect.top + pixel[1];
 
-      const hostLine =
-        (country === "United Kingdom" || country === "France")
-          ? `<div style="margin-bottom:6px; font-size:13px;">Host country for the BIG Program</div>`
-          : "";
+            const isNearTop = y < window.innerHeight * 0.3;
+            tooltipEl.className = isNearTop ? "hover-tooltip below" : "hover-tooltip above";
+            tooltipEl.style.left = x + "px";
+            tooltipEl.style.top = y + "px";
+      }
 
-      const bigSection =
-        programs.includes("BIG") && bigScholars
-          ? `
+      function tooltipHTML(country, programs, bigScholars) {
+            const chips = programs.length
+            ? `<div class="popup-programs">${
+                  programs
+                  .map((code) => `<span class="popup-program ${code.toLowerCase()}">${programLabel(code)}</span>`)
+                  .join("")
+            }</div>`
+            : "";
+
+            const hostLine =
+            (country === "United Kingdom" || country === "France")
+            ? `<div style="margin-bottom:6px; font-size:13px;">Host country for GTF BIG Talent Scholars</div>`
+            : "";
+
+            const bigSection =
+            programs.includes("BIG") && bigScholars
+            ? `
             <div class="big-scholars-section">
-              <div class="big-scholars-title">🎓 BIG scholars by starting year:</div>
+              <div class="big-scholars-title">🎓 Scholars by starting year</div>
               ${Object.entries(bigScholars)
+                .sort(([a], [b]) => Number(b) - Number(a))
                 .map(([year, names]) => `
                   <div class="year-group">
                     <div class="year-label">${year}</div>
@@ -1234,15 +464,15 @@
                 `)
                 .join("")}
             </div>`
-          : "";
+            : "";
 
-      return `
-        <div class="popup-title">${country}</div>
-        ${hostLine}
-        ${chips}
-        ${bigSection}
-      `;
-    }
+            return `
+                  <div class="popup-title">${country}</div>
+                  ${hostLine}
+                  ${chips}
+                  ${bigSection}
+                  `;
+      }
 
     // -----------------------------
     // 4) Layers
@@ -1250,50 +480,50 @@
     const countriesSource = new ol.source.Vector();
 
     // Hover state
-let hoveredCountryKey = null;
+    let hoveredCountryKey = null;
 
-function hexToRgba(hex, alpha) {
-  const h = hex.replace("#", "");
-  const r = parseInt(h.slice(0, 2), 16);
-  const g = parseInt(h.slice(2, 4), 16);
-  const b = parseInt(h.slice(4, 6), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
-}
-
-const countriesLayer = new ol.layer.Vector({
-  source: countriesSource,
-  style: (feature) => {
-    const key = feature.get("countryKey");
-    const level = feature.get("level"); // "elite" | "high" | "active" | "special" | null
-
-    // Países sin datos: casi blanco
-    let fillColor = "rgba(255,255,255,0.95)";
-    let strokeColor = "#D4D9DE";
-    let strokeWidth = 0.6;
-
-    if (level) {
-      // Mismo tono que tenían los puntos (pero aplicado al relleno)
-      const base = levelColor(level);
-      fillColor = hexToRgba(base, 0.85);
-      strokeColor = "#FFFFFF";
-      strokeWidth = 0.9;
+    function hexToRgba(hex, alpha) {
+      const h = hex.replace("#", "");
+      const r = parseInt(h.slice(0, 2), 16);
+      const g = parseInt(h.slice(2, 4), 16);
+      const b = parseInt(h.slice(4, 6), 16);
+      return `rgba(${r},${g},${b},${alpha})`;
     }
 
-    // Highlight al hover: más oscuro + borde más fuerte
-    if (key && key === hoveredCountryKey) {
-      if (level) {
-        fillColor = hexToRgba(levelColor(level), 0.97);
-      } else {
-        fillColor = "rgba(210,220,235,0.95)";
-      }
-    }
+    const countriesLayer = new ol.layer.Vector({
+      source: countriesSource,
+      style: (feature) => {
+        const key = feature.get("countryKey");
+        const level = feature.get("level"); // "elite" | "high" | "active" | "special" | null
 
-    return new ol.style.Style({
-      fill: new ol.style.Fill({ color: fillColor }),
-      stroke: new ol.style.Stroke({ color: strokeColor, width: strokeWidth }),
+        // Países sin datos: casi blanco
+        let fillColor = "rgba(255,255,255,0.95)";
+        let strokeColor = "#D4D9DE";
+        let strokeWidth = 0.6;
+
+        if (level) {
+          // Mismo tono que tenían los puntos (pero aplicado al relleno)
+          const base = levelColor(level);
+          fillColor = hexToRgba(base, 0.85);
+          strokeColor = "#FFFFFF";
+          strokeWidth = 0.9;
+        }
+
+        // Highlight al hover: más oscuro + borde más fuerte
+        if (key && key === hoveredCountryKey) {
+          if (level) {
+            fillColor = hexToRgba(levelColor(level), 0.97);
+          } else {
+            fillColor = "rgba(210,220,235,0.95)";
+          }
+        }
+
+        return new ol.style.Style({
+          fill: new ol.style.Fill({ color: fillColor }),
+          stroke: new ol.style.Stroke({ color: strokeColor, width: strokeWidth }),
+        });
+      },
     });
-  },
-});
 
 
     // -----------------------------
@@ -1322,110 +552,111 @@ const countriesLayer = new ol.layer.Vector({
     });
 
     function countryKeyFromFeature(feature) {
-  const p = feature.getProperties();
+      const p = feature.getProperties();
 
-  // Natural Earth suele traer ADMIN como nombre “principal”
-  const raw =
-    p.ADMIN ||
-    p.NAME_LONG ||
-    p.NAME ||
-    p.name ||
-    p.SOVEREIGNT ||
-    "";
+      // Natural Earth suele traer ADMIN como nombre “principal”
+      const raw =
+        p.ADMIN ||
+        p.NAME_LONG ||
+        p.NAME ||
+        p.name ||
+        p.SOVEREIGNT ||
+        "";
 
-  // Mínimo “normalize” para los casos típicos de Natural Earth
-  // (sin meter mil casos "por si acaso")
-  const map = {
-    "United States of America": "United States",
-  };
+      // Mínimo “normalize” para los casos típicos de Natural Earth
+      // (sin meter mil casos "por si acaso")
+      const map = {
+        "United States": "United States of America",
+        "Russia": "Russian Federation"
+      };
 
-  return map[raw] || raw;
-}
+      return map[raw] || raw;
+    }
 
-// 6) Load boundaries once (clean async)
-fetch("./data/ne_110m_admin_0_countries.json")
-  .then((r) => r.json())
-  .then((geo) => {
-    const fmt = new ol.format.GeoJSON();
-    const feats = fmt.readFeatures(geo, {
-      dataProjection: "EPSG:4326",
-      featureProjection: PROJ_CODE,
+    // 6) Load boundaries once (clean async)
+    fetch("./data/ne_110m_admin_0_countries.json")
+      .then((r) => r.json())
+      .then((geo) => {
+        const fmt = new ol.format.GeoJSON();
+        const feats = fmt.readFeatures(geo, {
+          dataProjection: "EPSG:4326",
+          featureProjection: PROJ_CODE,
+        });
+
+        // Enlazar datos programData -> feature
+        for (const f of feats) {
+          const key = countryKeyFromFeature(f);
+          f.set("countryKey", key);
+
+          const d = programData[key];
+          if (d) {
+            const programs = d.programs || [];
+            f.set("programs", programs);
+            f.set("bigScholars", d.bigScholars || null);
+            f.set("level", levelFromPrograms(programs));
+          } else {
+            // sin data
+            f.set("programs", []);
+            f.set("bigScholars", null);
+            f.set("level", null);
+          }
+        }
+
+        countriesSource.addFeatures(feats);
+      });
+
+    // 7) Interactions: hover tooltip + highlight, click open website
+    const tooltipEl = makeTooltipEl();
+    const mapTargetEl = map.getTargetElement();
+
+    map.on("singleclick", (evt) => {
+      const feat = map.forEachFeatureAtPixel(evt.pixel, (f, layer) =>
+        layer === countriesLayer ? f : null
+      );
+      if (!feat) return;
+
+      const country = feat.get("countryKey");
+      const url = countryWebsites[country];
+      if (url) window.open(url, "_blank");
     });
 
-    // Enlazar datos programData -> feature
-    for (const f of feats) {
-      const key = countryKeyFromFeature(f);
-      f.set("countryKey", key);
+    map.on("pointermove", (evt) => {
+      const feat = map.forEachFeatureAtPixel(evt.pixel, (f, layer) =>
+        layer === countriesLayer ? f : null
+      );
 
-      const d = programData[key];
-      if (d) {
-        const programs = d.programs || [];
-        f.set("programs", programs);
-        f.set("bigScholars", d.bigScholars || null);
-        f.set("level", levelFromPrograms(programs));
-      } else {
-        // sin data
-        f.set("programs", []);
-        f.set("bigScholars", null);
-        f.set("level", null);
+      if (!feat) {
+        mapTargetEl.style.cursor = "";
+        tooltipEl.style.display = "none";
+        if (hoveredCountryKey !== null) {
+          hoveredCountryKey = null;
+          countriesLayer.changed();
+        }
+        return;
       }
-    }
 
-    countriesSource.addFeatures(feats);
-  });
+      const country = feat.get("countryKey");
+      const programs = feat.get("programs") || [];
+      const bigScholars = feat.get("bigScholars");
 
-// 7) Interactions: hover tooltip + highlight, click open website
-const tooltipEl = makeTooltipEl();
-const mapTargetEl = map.getTargetElement();
+      mapTargetEl.style.cursor = programs.length ? "pointer" : "";
 
-map.on("singleclick", (evt) => {
-  const feat = map.forEachFeatureAtPixel(evt.pixel, (f, layer) =>
-    layer === countriesLayer ? f : null
-  );
-  if (!feat) return;
+      // highlight
+      if (hoveredCountryKey !== country) {
+        hoveredCountryKey = country;
+        countriesLayer.changed(); // fuerza re-render del estilo
+      }
 
-  const country = feat.get("countryKey");
-  const url = countryWebsites[country];
-  if (url) window.open(url, "_blank");
-});
+      // tooltip (solo si tiene programas; si lo quieres siempre, quita este if)
+      if (!programs.length) {
+        tooltipEl.style.display = "none";
+        return;
+      }
 
-map.on("pointermove", (evt) => {
-  const feat = map.forEachFeatureAtPixel(evt.pixel, (f, layer) =>
-    layer === countriesLayer ? f : null
-  );
-
-  if (!feat) {
-    mapTargetEl.style.cursor = "";
-    tooltipEl.style.display = "none";
-    if (hoveredCountryKey !== null) {
-      hoveredCountryKey = null;
-      countriesLayer.changed();
-    }
-    return;
-  }
-
-  const country = feat.get("countryKey");
-  const programs = feat.get("programs") || [];
-  const bigScholars = feat.get("bigScholars");
-
-  mapTargetEl.style.cursor = programs.length ? "pointer" : "";
-
-  // highlight
-  if (hoveredCountryKey !== country) {
-    hoveredCountryKey = country;
-    countriesLayer.changed(); // fuerza re-render del estilo
-  }
-
-  // tooltip (solo si tiene programas; si lo quieres siempre, quita este if)
-  if (!programs.length) {
-    tooltipEl.style.display = "none";
-    return;
-  }
-
-  tooltipEl.innerHTML = tooltipHTML(country, programs, bigScholars);
-  tooltipEl.style.display = "block";
-  setTooltipPosition(tooltipEl, mapTargetEl, evt.pixel);
-});
+      tooltipEl.innerHTML = tooltipHTML(country, programs, bigScholars);
+      tooltipEl.style.display = "block";
+      setTooltipPosition(tooltipEl, mapTargetEl, evt.pixel);
+    });
 
     // -----------------------------
     // 8) Stats (single pass, no extra objects)
